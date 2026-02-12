@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 9,
+  "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend and a secure admin dashboard to manage projects, skills, about content, and contact messages without code changes, built with Laravel + MySQL and Vue.js (or Blade) and deployment-ready for Linux/Nginx.",
+  "architectural_notes": [
+    "Tech stack: Laravel backend + MySQL database; frontend Vue.js or Blade with Bootstrap/Tailwind.",
+    "Authentication to use Laravel Breeze or Jetstream for admin login.",
+    "Admin panel must support full dynamic content management (projects, skills, about, contact messages).",
+    "Deployment target: Linux server with Nginx/Apache; performance-focused and scalable.",
+    "Hero typing/rotating-text effect: set typingWords to ['Developer','Designer','Database','Debugger','DevOps']. Համընկնում է user-provided list/comments; replaces prior word list."
+  ],
+  "known_issues": [
+    "Hero typing word list requirement is inconsistent across notes/features (previously included 'Data'; user now requests 'Debugger' instead)."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-a-responsive-public-portfolio-website-with-sections-pages-home-hero-ctas-about-skills-projects-card-grid-experience-timeline-and-contact-form-social-links-using-the-exact-user-provided-english-copy-for-the-hero-and-about-sections",
+      "title": "Implement a responsive public portfolio website with sections/pages: Home (hero + CTAs), About, Skills, Projects (card grid), Experience (timeline), and Contact (form + social links), using the exact user-provided English copy for the Hero and About sections.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-coherent-modern-visual-theme-for-the-entire-app-typography-spacing-color-system-components-with-smooth-subtle-animations-include-an-optional-dark-mode-toggle-and-ensure-the-ui-remains-clean-and-professional-on-mobile-and-desktop-do-not-use-a-blue-purple-primary-palette",
+      "title": "Create a coherent modern visual theme for the entire app (typography, spacing, color system, components) with smooth, subtle animations; include an optional dark mode toggle and ensure the UI remains clean and professional on mobile and desktop. Do not use a blue/purple primary palette.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-secure-admin-authentication-and-authorization-using-internet-identity-restrict-all-admin-only-backend-operations-create-update-delete-projects-manage-skills-update-about-content-view-contact-messages-manage-experience-and-social-links-to-authenticated-admins",
+      "title": "Implement secure admin authentication and authorization using Internet Identity. Restrict all admin-only backend operations (create/update/delete projects, manage skills, update about content, view contact messages, manage experience and social links) to authenticated admins.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-an-admin-dashboard-ui-that-allows-managing-site-content-without-code-changes-projects-crud-including-image-upload-skills-management-add-edit-level-and-category-about-content-editor-experience-timeline-editor-social-links-editor-and-an-inbox-view-of-contact-form-submissions",
+      "title": "Build an Admin Dashboard UI that allows managing site content without code changes: Projects CRUD (including image upload), Skills management (add/edit level and category), About content editor, Experience timeline editor, Social links editor, and an inbox view of contact form submissions.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-seed-the-portfolio-with-initial-content-matching-the-provided-example-projects-and-skill-lists-so-the-public-site-displays-meaningful-data-on-first-load",
+      "title": "Seed the portfolio with initial content matching the provided example projects and skill lists so the public site displays meaningful data on first load.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-public-contact-form-flow-end-to-end-validate-inputs-on-the-frontend-submit-to-the-backend-persist-messages-and-show-a-clear-success-failure-state-to-the-user",
+      "title": "Implement the public Contact form flow end-to-end: validate inputs on the frontend, submit to the backend, persist messages, and show a clear success/failure state to the user.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-download-resume-button-behavior-that-downloads-a-static-resume-file-from-the-frontend-s-public-assets-provide-a-placeholder-resume-file-in-the-repo-that-can-be-replaced-later-without-code-changes",
+      "title": "Implement a \"Download Resume\" button behavior that downloads a static resume file from the frontend’s public assets. Provide a placeholder resume file in the repo that can be replaced later without code changes.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-premium-project-cards-with-project-title-description-technologies-used-live-demo-button-when-present-github-button-when-present-and-project-image-with-responsive-layout-and-accessible-interaction-states",
+      "title": "Implement premium project cards with: Project Title, Description, Technologies Used, Live Demo button (when present), GitHub button (when present), and Project Image, with responsive layout and accessible interaction states.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-static-home-page-hero-headline-text-full-stack-developer-with-a-typing-style-animated-headline-where-the-d-word-cycles-through-5-words-showing-each-word-sequentially-as-if-typed-must-include-at-least-develop-and-design-keep-the-overall-headline-meaning-as-full-stack-animated-d-word-and-ensure-the-animation-is-smooth-and-professional",
+      "title": "Replace the static Home page hero headline text \"Full-Stack Developer\" with a typing-style animated headline where the \"D\" word cycles through 5 words, showing each word sequentially as if typed (must include at least: \"Develop\" and \"Design\"). Keep the overall headline meaning as \"Full-Stack\" + animated \"D\" word, and ensure the animation is smooth and professional.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-home-page-hero-typing-animation-word-list-to-exactly-developer-designer-database-devops-data",
+      "title": "Update the Home page hero typing animation word list to exactly: ['Developer', 'Designer', 'Database', 'DevOps', 'Data'].",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-home-page-hero-typing-animation-word-list-the-typingwords-constant-in-frontend-src-pages-homepage-tsx-to-exactly-developer-designer-database-debugger-devops-in-that-order",
+      "title": "Update the Home page hero typing animation word list (the `typingWords` constant in `frontend/src/pages/HomePage.tsx`) to exactly: ['Developer','Designer','Database','Debugger','DevOps'] in that order.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Build responsive public portfolio frontend with sections: Home (hero + CTAs), About, Skills, Projects, Experience timeline, Contact page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Dynamic Projects page with premium project cards (title, description, tech stack, live demo link, GitHub link, image) and seed with 3 example projects",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Skills section with categorized skills and visual indicators (icons/progress bars) editable from admin",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Contact form (name/email/message) with storage and social links (GitHub, LinkedIn, email) on frontend",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Secure Admin Panel with authentication (Laravel Breeze/Jetstream) and dashboard for managing site content",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Admin CRUD for Projects including image upload, edit, delete",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Admin management for Skills (add/update skill levels) and About section content updates",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Admin inbox for viewing contact messages submitted via contact form",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Design requirements: modern clean UI, smooth animations, optional dark mode, premium project card styling",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Deployment-ready setup for Linux server with Nginx/Apache support",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Implement backend data models and APIs to support fully dynamic content for the portfolio: About content, Skills (with category and level), Projects (title, description, technologies, liveDemoUrl, githubUrl, image), Experience entries, Social links, and Contact messages (name, email, message, createdAt).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Update the hero headline text: replace/modify \"Full-Stack Developer\" to use a typing-style animation that cycles through multiple \"D\" words (e.g., Develop, Design, etc.), showing each word sequentially like typed text.",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Dynamic developer portfolio with public site and authenticated admin dashboard (projects/skills/about/contact)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

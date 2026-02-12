@@ -1,2 +1,3 @@
-# dynamic-developer-portfolio-with-public-site-and-authenticated-admin-dashboard-p
-Exported from Caffeine project: Dynamic developer portfolio with public site and authenticated admin dashboard (projects/skills/about/contact)
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

@@ -1,0 +1,46 @@
+{
+  "kind": "build_request",
+  "title": "Update Home hero typing words to include “Debugger”",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "text": "Update the Home page hero typing animation word list (the `typingWords` constant in `frontend/src/pages/HomePage.tsx`) to exactly: ['Developer','Designer','Database','Debugger','DevOps'] in that order.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "const typingWords = [\n  'Developer',\n  'Designer',\n  'Database',\n  'Debugger',\n  'DevOps'\n];\n\nadd this"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`frontend/src/pages/HomePage.tsx` defines `typingWords` with exactly 5 entries in this order: Developer, Designer, Database, Debugger, DevOps.",
+        "The Home hero headline continues to render as \"Full-Stack\" followed by the animated typing word, and the animation cycles through the updated list without runtime errors."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify any files under `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, or anything in `frontend/src/components/ui` (compose existing components instead).",
+    "Keep all user-facing text in English."
+  ],
+  "nonGoals": [
+    "Do not change typing animation speed, caret styling, or the TypingWord component behavior beyond updating the provided word list.",
+    "Do not change any backend logic or data models."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

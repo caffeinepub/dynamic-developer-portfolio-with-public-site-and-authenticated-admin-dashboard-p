@@ -1,0 +1,22 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Update Home hero typing words to include “Debugger”",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "summary": "Update the Home page hero typing animation word list to include “Debugger” and match the exact requested order.",
+      "acceptanceCriteria": [
+        "`frontend/src/pages/HomePage.tsx` defines `typingWords` with exactly 5 entries in this order: Developer, Designer, Database, Debugger, DevOps.",
+        "The Home hero headline continues to render as \"Full-Stack\" followed by the animated typing word, and the animation cycles through the updated list without runtime errors."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Replace the existing `typingWords` constant with exactly: ['Developer','Designer','Database','Debugger','DevOps'] (5 entries, in that order), without changing TypingWord behavior, animation settings, or other hero content."
+        }
+      ]
+    }
+  ]
+}
