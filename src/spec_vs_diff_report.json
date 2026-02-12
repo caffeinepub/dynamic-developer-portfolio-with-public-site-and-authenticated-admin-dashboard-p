@@ -1,17 +1,24 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T07:29:42.377Z",
-  "summary": "Diff implements intended-admin-route redirect after successful email/password login and adds shared admin session token propagation across multiple hook consumers, aiming to fix login redirect and session consistency bugs.",
+  "generatedAt": "2026-02-12T07:37:58.219Z",
+  "summary": "REQ-21 and REQ-22 appear implemented: AdminLayout switches the Logout button to a disabled loading state with spinner + English text \"Logging out...\" and prevents repeat requests while pending; useAdminSession now exposes a dedicated `isLogoutPending` flag driven by the logout mutation pending state and continues clearing the session token on successful logout.",
   "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.78,
+  "hallucinated_features": [
+    {
+      "description": "Updated project metadata/summary files (non-runtime) not explicitly requested by the BuildRequest.",
+      "reason": "The BuildRequest only asks for a logout loading indicator and a logout pending flag; changes to project tracking/docs are not part of the requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt",
+        "project_state.json"
+      ]
+    }
+  ],
+  "confidence": 0.86,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/auth/AdminEmailLoginForm.tsx",
     "frontend/src/components/layout/AdminLayout.tsx",
     "frontend/src/hooks/useAdminSession.ts",
-    "frontend/src/utils/adminRedirect.ts",
     "project_state.json"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T07:29:42.380Z",
+  "generatedAt": "2026-02-12T07:37:58.222Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,27 +11,22 @@
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-19",
-        "summary": "Ensure that after a successful admin email/password login, the UI redirects the user away from the login form to the intended admin destination (defaulting to the admin dashboard at `/admin`).",
+        "id": "REQ-21",
+        "summary": "Add a visible loading state when an authenticated admin clicks the Logout button so the user can clearly see that logout is in progress until the operation completes.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/utils/adminRedirect.ts",
-          "frontend/src/components/layout/AdminLayout.tsx",
-          "frontend/src/components/auth/AdminEmailLoginForm.tsx"
+          "frontend/src/components/layout/AdminLayout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/utils/adminRedirect.ts",
-          "frontend/src/components/layout/AdminLayout.tsx",
-          "frontend/src/components/auth/AdminEmailLoginForm.tsx"
+          "frontend/src/components/layout/AdminLayout.tsx"
         ]
       },
       {
-        "id": "REQ-20",
-        "summary": "Fix admin session state propagation so that a successful login updates the authenticated state consistently across the admin layout/guard and login form (even when `useAdminSession()` is used in multiple components).",
+        "id": "REQ-22",
+        "summary": "Expose a dedicated logout pending/loading flag from the admin session hook so UI components can reliably render a loader during logout without conflating it with login or session validation loading.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/hooks/useAdminSession.ts",
-          "frontend/src/hooks/useAdminGuard.ts",
           "frontend/src/components/layout/AdminLayout.tsx"
         ],
         "matchedFiles": [
@@ -46,10 +41,8 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/auth/AdminEmailLoginForm.tsx",
     "frontend/src/components/layout/AdminLayout.tsx",
     "frontend/src/hooks/useAdminSession.ts",
-    "frontend/src/utils/adminRedirect.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

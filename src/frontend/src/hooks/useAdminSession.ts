@@ -102,12 +102,14 @@ export function useAdminSession() {
 
   const isAuthenticated = sessionValidation.data === true;
   const isLoading = actorFetching || sessionValidation.isLoading || loginMutation.isPending;
+  const isLogoutPending = logoutMutation.isPending;
 
   return {
     login,
     logout,
     isAuthenticated,
     isLoading,
+    isLogoutPending,
     isLoginError: loginMutation.isError,
     loginError: loginMutation.error,
     sessionToken,

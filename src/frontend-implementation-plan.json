@@ -1,57 +1,43 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix admin login redirect and session propagation for email/password admin auth",
+  "title": "Admin logout loading indicator and dedicated pending flag",
   "requirements": [
     {
-      "id": "REQ-19",
-      "summary": "Redirect to intended admin route (default /admin) after successful admin email/password login, while keeping invalid-credentials inline errors.",
+      "id": "REQ-21",
+      "summary": "Show a visible, disabled loading state on the AdminLayout Logout button while admin logout is in progress.",
       "acceptanceCriteria": [
-        "When a user logs in successfully from the admin login form, the app navigates to `/admin` and displays the Admin Dashboard page content (not the login form).",
-        "If the user attempted to visit a specific admin sub-route (e.g. `/admin/projects`) while unauthenticated, after login the app navigates to that originally requested route instead of always going to `/admin`.",
-        "Invalid credentials continue to show an inline error and do not navigate."
+        "When the admin clicks the Logout button in the admin header (AdminLayout), the button immediately switches to a loading presentation (e.g., spinner icon + text \"Logging out...\") and becomes disabled until the logout request finishes.",
+        "While logout is pending, repeated clicks do not trigger multiple logout requests.",
+        "After logout completes, the admin session token is cleared as it is today and the user is shown the unauthenticated admin experience (login form / guard behavior) without leaving the UI in a loading state.",
+        "All user-facing text for the loading state is in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/adminRedirect.ts",
-          "operation": "create",
-          "description": "Add a small utility to persist, read, and clear an intended admin destination (e.g., via sessionStorage) for post-login navigation, defaulting to `/admin` when none exists."
-        },
-        {
           "path": "frontend/src/components/layout/AdminLayout.tsx",
           "operation": "modify",
-          "description": "When unauthenticated and the current route is within `/admin`, persist the originally requested admin path using the new admin redirect utility before rendering the login form (so deep links like `/admin/projects` can be restored after login)."
-        },
-        {
-          "path": "frontend/src/components/auth/AdminEmailLoginForm.tsx",
-          "operation": "modify",
-          "description": "After a successful login response, navigate (replace) to the persisted intended admin path (or `/admin` by default) and clear the stored redirect; keep existing inline error behavior and ensure no navigation occurs for invalid credentials or failures."
+          "description": "Update the Logout button in AdminLayout to render a pending UI state (spinner icon + English text \"Logging out...\") and disable interaction while logout is pending; ensure the click handler is guarded so multiple logout requests cannot be triggered. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
-      "id": "REQ-20",
-      "summary": "Make admin session state a single shared source of truth so useAdminSession/useAdminGuard stay consistent across components without reload, and logout reliably clears admin state.",
+      "id": "REQ-22",
+      "summary": "Expose a dedicated isLogoutPending flag from the admin session hook and consume it in AdminLayout for logout-only loading UI.",
       "acceptanceCriteria": [
-        "After login succeeds, `useAdminGuard()` reflects `isAuthenticated === true` without requiring a full page reload.",
-        "The admin login state remains consistent across components that call `useAdminSession()` (e.g., the login form and `AdminLayout`).",
-        "Logging out clears the session and returns the admin area to the login form on the next render."
+        "The admin session hook returns a boolean that is true while the logout mutation is pending.",
+        "AdminLayout uses this flag to render the Logout loader state (spinner + \"Logging out...\") and disable the Logout button while pending.",
+        "Existing login/session validation loading behaviors continue to work and are not broken by adding the logout pending flag."
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useAdminSession.ts",
           "operation": "modify",
-          "description": "Refactor session token handling to be shared across all hook instances (e.g., a module-level token store with subscription, or React Query-cached token) instead of per-hook local state; ensure login updates the shared token, triggers session validation refresh, and logout clears token + relevant cached admin auth state (without requiring a full reload)."
-        },
-        {
-          "path": "frontend/src/hooks/useAdminGuard.ts",
-          "operation": "modify",
-          "description": "Ensure the guard reflects the shared session/auth state from useAdminSession immediately after login/logout (no stale local state), and remains compatible with the existing AdminLayout logic."
+          "description": "Extend useAdminSession to expose a dedicated boolean (e.g., isLogoutPending) derived from the logout mutation pending state, without conflating it with existing isLoading for login/session validation; keep existing behaviors intact."
         },
         {
           "path": "frontend/src/components/layout/AdminLayout.tsx",
           "operation": "modify",
-          "description": "Ensure logout flow results in the admin area rendering the login form on the next render (and clears any stored intended admin redirect if applicable), relying on the shared session state propagation rather than a page reload."
+          "description": "Consume the new useAdminSession logout-pending flag to drive the Logout button's loading presentation and disabled state, ensuring logout UI state is independent from login/session validation loading. Verify the component's usage instructions before implementing."
         }
       ]
     }

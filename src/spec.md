@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Fix admin login so that successful email/password authentication redirects to the correct admin destination and updates authenticated state consistently across the admin UI without requiring a reload.
+**Goal:** Show a clear loading indicator while an authenticated admin logout request is in progress.
 
 **Planned changes:**
-- Update admin login flow to navigate to the originally requested admin route when present, otherwise default to `/admin` after successful login.
-- Ensure admin session/auth state propagates consistently across components using `useAdminSession()` / `useAdminGuard()` so the admin layout/guard reflects `isAuthenticated === true` immediately after login.
-- Confirm invalid credentials keep the user on the login form with an inline error, and logout clears session state so the admin area returns to the login form on next render.
+- Add a dedicated `logoutPending` (or equivalent) boolean to the admin session hook that is true only while the logout action is pending.
+- Update the AdminLayout header Logout button to use the logout pending flag to: (1) switch to a loading presentation (spinner + “Logging out...”), and (2) disable the button until logout completes.
+- Ensure repeated clicks during the pending state do not trigger multiple logout requests, and that after logout finishes the UI transitions to the unauthenticated admin experience without remaining in a loading state.
 
-**User-visible outcome:** After a successful admin login, the app redirects away from the login form to the admin dashboard (`/admin`) or the originally requested admin page (e.g. `/admin/projects`), and authentication state updates immediately across the admin area without a full page refresh.
+**User-visible outcome:** When an admin clicks Logout, the button immediately shows a disabled “Logging out...” loader until logout completes, then the admin is returned to the unauthenticated (login/guard) experience.

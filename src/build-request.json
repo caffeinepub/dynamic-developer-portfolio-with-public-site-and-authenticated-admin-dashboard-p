@@ -1,57 +1,67 @@
 {
   "kind": "build_request",
-  "title": "Fix admin login redirect to dashboard after successful email/password login",
-  "priority": "high",
+  "title": "Show loading indicator during admin logout",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-19",
-      "text": "Ensure that after a successful admin email/password login, the UI redirects the user away from the login form to the intended admin destination (defaulting to the admin dashboard at `/admin`).",
+      "id": "REQ-21",
+      "text": "Add a visible loading state when an authenticated admin clicks the Logout button so the user can clearly see that logout is in progress until the operation completes.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "After logging in as an admin, the system is not redirecting me to the admin dashboard."
+          "Please add a loader on logout so the user knows the action is processing"
         ]
       },
       "acceptanceCriteria": [
-        "When a user logs in successfully from the admin login form, the app navigates to `/admin` and displays the Admin Dashboard page content (not the login form).",
-        "If the user attempted to visit a specific admin sub-route (e.g. `/admin/projects`) while unauthenticated, after login the app navigates to that originally requested route instead of always going to `/admin`.",
-        "Invalid credentials continue to show an inline error and do not navigate."
+        "When the admin clicks the Logout button in the admin header (AdminLayout), the button immediately switches to a loading presentation (e.g., spinner icon + text \"Logging out...\") and becomes disabled until the logout request finishes.",
+        "While logout is pending, repeated clicks do not trigger multiple logout requests.",
+        "After logout completes, the admin session token is cleared as it is today and the user is shown the unauthenticated admin experience (login form / guard behavior) without leaving the UI in a loading state.",
+        "All user-facing text for the loading state is in English."
       ]
     },
     {
-      "id": "REQ-20",
-      "text": "Fix admin session state propagation so that a successful login updates the authenticated state consistently across the admin layout/guard and login form (even when `useAdminSession()` is used in multiple components).",
+      "id": "REQ-22",
+      "text": "Expose a dedicated logout pending/loading flag from the admin session hook so UI components can reliably render a loader during logout without conflating it with login or session validation loading.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "After logging in as an admin, the system is not redirecting me to the admin dashboard."
+          "Please add a loader on logout so the user knows the action is processing"
         ]
       },
       "acceptanceCriteria": [
-        "After login succeeds, `useAdminGuard()` reflects `isAuthenticated === true` without requiring a full page reload.",
-        "The admin login state remains consistent across components that call `useAdminSession()` (e.g., the login form and `AdminLayout`).",
-        "Logging out clears the session and returns the admin area to the login form on the next render."
+        "The admin session hook returns a boolean that is true while the logout mutation is pending.",
+        "AdminLayout uses this flag to render the Logout loader state (spinner + \"Logging out...\") and disable the Logout button while pending.",
+        "Existing login/session validation loading behaviors continue to work and are not broken by adding the logout pending flag."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under `frontend/src/components/ui` (shadcn UI components are read-only).",
-    "Do not modify any paths listed in `frontend.immutablePaths` in SYSTEM_CONTEXT (compose around them instead).",
-    "Keep all backend logic in the single Motoko actor (`backend/main.mo`); only introduce migrations if a state upgrade is required (not expected for this fix)."
+    "Do not modify files under frontend/src/components/ui (Shadcn components are read-only).",
+    "Do not edit any frontend paths marked immutable in SYSTEM_CONTEXT."
   ],
   "nonGoals": [
-    "Changing admin credentials or authentication model.",
-    "Adding new backend endpoints for redirect behavior.",
-    "Redesigning the admin dashboard UI beyond what is necessary to fix the redirect/session propagation bug."
+    "Changing backend logout behavior or session invalidation logic.",
+    "Adding new authentication methods or altering the admin login flow beyond displaying a logout loader.",
+    "Adding global page loaders unrelated to logout."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

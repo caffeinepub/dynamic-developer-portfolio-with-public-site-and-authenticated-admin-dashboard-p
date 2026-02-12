@@ -4,13 +4,13 @@ import { useAdminGuard } from '../../hooks/useAdminGuard';
 import { useAdminSession } from '../../hooks/useAdminSession';
 import AdminEmailLoginForm from '../auth/AdminEmailLoginForm';
 import DarkModeToggle from '../controls/DarkModeToggle';
-import { LayoutDashboard, FolderKanban, Lightbulb, User, Briefcase, Link as LinkIcon, Mail, LogOut } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Lightbulb, User, Briefcase, Link as LinkIcon, Mail, LogOut, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { setIntendedAdminPath, clearIntendedAdminPath } from '../../utils/adminRedirect';
 
 export default function AdminLayout() {
   const { isAuthenticated, isLoading } = useAdminGuard();
-  const { logout } = useAdminSession();
+  const { logout, isLogoutPending } = useAdminSession();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
@@ -54,6 +54,7 @@ export default function AdminLayout() {
   ];
 
   const handleLogout = async () => {
+    if (isLogoutPending) return;
     await logout();
   };
 
@@ -73,9 +74,23 @@ export default function AdminLayout() {
               </Button>
             </Link>
             <DarkModeToggle />
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleLogout}
+              disabled={isLogoutPending}
+            >
+              {isLogoutPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logging out...
+                </>
+              ) : (
+                <>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </>
+              )}
             </Button>
           </div>
         </div>

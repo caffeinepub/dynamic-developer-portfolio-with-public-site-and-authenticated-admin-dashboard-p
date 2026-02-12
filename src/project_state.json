@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 13,
+  "projectStateVersion": 15,
   "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend and a secure admin dashboard to manage projects, skills, about content, and contact messages without code changes, built with Laravel + MySQL and Vue.js (or Blade), deployment-ready for Linux/Nginx, with admin authentication changed/extended to support email/password login (in addition to or replacing prior Internet Identity approach).",
   "architectural_notes": [
     "Tech stack: Laravel backend + MySQL database; frontend Vue.js or Blade with Bootstrap/Tailwind.",
@@ -15,7 +15,7 @@
     "Admin authentication approach is inconsistent across requirements/implementation (Internet Identity-only vs Laravel Breeze/Jetstream email/password).",
     "Admin login flow bug: after successful admin login, user is not redirected to the admin dashboard."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-implement-a-responsive-public-portfolio-website-with-sections-pages-home-hero-ctas-about-skills-projects-card-grid-experience-timeline-and-contact-form-social-links-using-the-exact-user-provided-english-copy-for-the-hero-and-about-sections",
@@ -144,6 +144,22 @@
         "REQ-20"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-visible-loading-state-when-an-authenticated-admin-clicks-the-logout-button-so-the-user-can-clearly-see-that-logout-is-in-progress-until-the-operation-completes",
+      "title": "Add a visible loading state when an authenticated admin clicks the Logout button so the user can clearly see that logout is in progress until the operation completes.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-expose-a-dedicated-logout-pending-loading-flag-from-the-admin-session-hook-so-ui-components-can-reliably-render-a-loader-during-logout-without-conflating-it-with-login-or-session-validation-loading",
+      "title": "Expose a dedicated logout pending/loading flag from the admin session hook so UI components can reliably render a loader during logout without conflating it with login or session validation loading.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -249,6 +265,12 @@
       "reqIds": [
         "REQ-15"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Add a loading indicator/loader during admin logout so the user sees the action is processing until completion (then redirect/update auth state).",
+      "reqIds": [],
       "status": "pending"
     }
   ],
