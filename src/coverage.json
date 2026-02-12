@@ -1,24 +1,42 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T05:33:29.516Z",
+  "generatedAt": "2026-02-12T07:29:42.380Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-12",
-        "summary": "Update the Home page hero typing animation word list (the `typingWords` constant in `frontend/src/pages/HomePage.tsx`) to exactly: ['Developer','Designer','Database','Debugger','DevOps'] in that order.",
+        "id": "REQ-19",
+        "summary": "Ensure that after a successful admin email/password login, the UI redirects the user away from the login form to the intended admin destination (defaulting to the admin dashboard at `/admin`).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/HomePage.tsx"
+          "frontend/src/utils/adminRedirect.ts",
+          "frontend/src/components/layout/AdminLayout.tsx",
+          "frontend/src/components/auth/AdminEmailLoginForm.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/HomePage.tsx"
+          "frontend/src/utils/adminRedirect.ts",
+          "frontend/src/components/layout/AdminLayout.tsx",
+          "frontend/src/components/auth/AdminEmailLoginForm.tsx"
+        ]
+      },
+      {
+        "id": "REQ-20",
+        "summary": "Fix admin session state propagation so that a successful login updates the authenticated state consistently across the admin layout/guard and login form (even when `useAdminSession()` is used in multiple components).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useAdminSession.ts",
+          "frontend/src/hooks/useAdminGuard.ts",
+          "frontend/src/components/layout/AdminLayout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useAdminSession.ts",
+          "frontend/src/components/layout/AdminLayout.tsx"
         ]
       }
     ]
@@ -28,7 +46,10 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/components/auth/AdminEmailLoginForm.tsx",
+    "frontend/src/components/layout/AdminLayout.tsx",
+    "frontend/src/hooks/useAdminSession.ts",
+    "frontend/src/utils/adminRedirect.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -15,20 +15,6 @@ export function useGetContactMessages() {
   });
 }
 
-export function useIsCallerAdmin() {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<boolean>({
-    queryKey: ['isCallerAdmin'],
-    queryFn: async () => {
-      if (!actor) return false;
-      return actor.isCallerAdmin();
-    },
-    enabled: !!actor && !isFetching,
-    retry: false,
-  });
-}
-
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
 

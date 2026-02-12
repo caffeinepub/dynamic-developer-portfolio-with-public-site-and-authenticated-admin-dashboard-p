@@ -11,6 +11,14 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface About { 'content' : string }
+export interface AdminAuthResponse { 'isAdmin' : boolean }
+export interface AdminCredentials { 'password' : string, 'email' : string }
+export interface AdminSession {
+  'principal' : Principal,
+  'createdAt' : Time,
+  'email' : string,
+  'sessionToken' : string,
+}
 export interface ContactMessage {
   'id' : bigint,
   'name' : string,
@@ -19,6 +27,9 @@ export interface ContactMessage {
   'email' : string,
   'message' : string,
 }
+export type CreateSessionResponse = { 'ok' : AdminSession } |
+  { 'failure' : string } |
+  { 'invalidCredentials' : null };
 export interface Experience {
   'id' : bigint,
   'title' : string,
@@ -82,6 +93,7 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createAdminSession' : ActorMethod<[AdminCredentials], CreateSessionResponse>,
   'createExperience' : ActorMethod<[Experience], undefined>,
   'createProject' : ActorMethod<[Project], undefined>,
   'createSkill' : ActorMethod<[Skill], undefined>,
@@ -100,8 +112,12 @@ export interface _SERVICE {
   'getSkills' : ActorMethod<[], Array<Skill>>,
   'getSocialLinks' : ActorMethod<[], Array<SocialLink>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'hasActiveSession' : ActorMethod<[], boolean>,
   'initialize' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isValidAdminSession' : ActorMethod<[string], boolean>,
+  'loginAsAdmin' : ActorMethod<[AdminCredentials], AdminAuthResponse>,
+  'logoutAdmin' : ActorMethod<[], undefined>,
   'markMessageAsRead' : ActorMethod<[bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'submitContactMessage' : ActorMethod<[string, string, string], undefined>,

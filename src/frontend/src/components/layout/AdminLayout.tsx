@@ -1,17 +1,32 @@
 import { Outlet, Link, useRouterState } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { useAdminGuard } from '../../hooks/useAdminGuard';
-import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import LoginButton from '../auth/LoginButton';
-import AccessDeniedScreen from '../auth/AccessDeniedScreen';
+import { useAdminSession } from '../../hooks/useAdminSession';
+import AdminEmailLoginForm from '../auth/AdminEmailLoginForm';
 import DarkModeToggle from '../controls/DarkModeToggle';
-import { LayoutDashboard, FolderKanban, Lightbulb, User, Briefcase, Link as LinkIcon, Mail } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Lightbulb, User, Briefcase, Link as LinkIcon, Mail, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { setIntendedAdminPath, clearIntendedAdminPath } from '../../utils/adminRedirect';
 
 export default function AdminLayout() {
-  const { isAuthenticated, isAdmin, isLoading, isDenied } = useAdminGuard();
-  const { identity } = useInternetIdentity();
+  const { isAuthenticated, isLoading } = useAdminGuard();
+  const { logout } = useAdminSession();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
+
+  // Store intended path when user tries to access admin area while unauthenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && currentPath.startsWith('/admin')) {
+      setIntendedAdminPath(currentPath);
+    }
+  }, [isAuthenticated, isLoading, currentPath]);
+
+  // Clear intended path when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      clearIntendedAdminPath();
+    }
+  }, [isAuthenticated]);
 
   if (isLoading) {
     return (
@@ -25,19 +40,7 @@ export default function AdminLayout() {
   }
 
   if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/30">
-        <div className="w-full max-w-md space-y-6 rounded-lg border bg-card p-8 text-center shadow-lg">
-          <h1 className="text-2xl font-bold">Admin Access Required</h1>
-          <p className="text-muted-foreground">Please log in to access the admin dashboard.</p>
-          <LoginButton />
-        </div>
-      </div>
-    );
-  }
-
-  if (isDenied) {
-    return <AccessDeniedScreen />;
+    return <AdminEmailLoginForm />;
   }
 
   const adminLinks = [
@@ -49,6 +52,10 @@ export default function AdminLayout() {
     { path: '/admin/social-links', label: 'Social Links', icon: LinkIcon },
     { path: '/admin/messages', label: 'Messages', icon: Mail },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -66,7 +73,10 @@ export default function AdminLayout() {
               </Button>
             </Link>
             <DarkModeToggle />
-            <LoginButton />
+            <Button variant="outline" size="sm" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </div>
       </header>

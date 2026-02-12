@@ -89,6 +89,28 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface AdminAuthResponse {
+    isAdmin: boolean;
+}
+export type Time = bigint;
+export interface _CaffeineStorageRefillInformation {
+    proposed_top_up_amount?: bigint;
+}
+export interface SocialLink {
+    id: bigint;
+    url: string;
+    platform: string;
+}
+export interface _CaffeineStorageCreateCertificateResult {
+    method: string;
+    blob_hash: string;
+}
+export interface AdminSession {
+    principal: Principal;
+    createdAt: Time;
+    email: string;
+    sessionToken: string;
+}
 export interface ContactMessage {
     id: bigint;
     name: string;
@@ -97,20 +119,11 @@ export interface ContactMessage {
     email: string;
     message: string;
 }
-export type Time = bigint;
 export interface Skill {
     id: bigint;
     name: string;
     level: string;
     category: string;
-}
-export interface _CaffeineStorageRefillInformation {
-    proposed_top_up_amount?: bigint;
-}
-export interface SocialLink {
-    id: bigint;
-    url: string;
-    platform: string;
 }
 export interface Experience {
     id: bigint;
@@ -124,9 +137,19 @@ export interface Experience {
 export interface About {
     content: string;
 }
-export interface _CaffeineStorageCreateCertificateResult {
-    method: string;
-    blob_hash: string;
+export type CreateSessionResponse = {
+    __kind__: "ok";
+    ok: AdminSession;
+} | {
+    __kind__: "failure";
+    failure: string;
+} | {
+    __kind__: "invalidCredentials";
+    invalidCredentials: null;
+};
+export interface AdminCredentials {
+    password: string;
+    email: string;
 }
 export interface Project {
     id: bigint;
@@ -161,6 +184,7 @@ export interface backendInterface {
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createAdminSession(credentials: AdminCredentials): Promise<CreateSessionResponse>;
     createExperience(experience: Experience): Promise<void>;
     createProject(project: Project): Promise<void>;
     createSkill(skill: Skill): Promise<void>;
@@ -179,8 +203,12 @@ export interface backendInterface {
     getSkills(): Promise<Array<Skill>>;
     getSocialLinks(): Promise<Array<SocialLink>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    hasActiveSession(): Promise<boolean>;
     initialize(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
+    isValidAdminSession(sessionToken: string): Promise<boolean>;
+    loginAsAdmin(credentials: AdminCredentials): Promise<AdminAuthResponse>;
+    logoutAdmin(): Promise<void>;
     markMessageAsRead(id: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitContactMessage(name: string, email: string, message: string): Promise<void>;
@@ -190,7 +218,7 @@ export interface backendInterface {
     updateSkill(id: bigint, skill: Skill): Promise<void>;
     updateSocialLink(id: bigint, socialLink: SocialLink): Promise<void>;
 }
-import type { UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { AdminSession as _AdminSession, CreateSessionResponse as _CreateSessionResponse, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -303,6 +331,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n8(this._uploadFile, this._downloadFile, arg1));
             return result;
+        }
+    }
+    async createAdminSession(arg0: AdminCredentials): Promise<CreateSessionResponse> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createAdminSession(arg0);
+                return from_candid_CreateSessionResponse_n10(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createAdminSession(arg0);
+            return from_candid_CreateSessionResponse_n10(this._uploadFile, this._downloadFile, result);
         }
     }
     async createExperience(arg0: Experience): Promise<void> {
@@ -449,28 +491,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n11(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n13(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n11(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n13(this._uploadFile, this._downloadFile, result);
         }
     }
     async getContactMessages(): Promise<Array<ContactMessage>> {
@@ -547,14 +589,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async hasActiveSession(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.hasActiveSession();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.hasActiveSession();
+            return result;
         }
     }
     async initialize(): Promise<void> {
@@ -582,6 +638,48 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.isCallerAdmin();
+            return result;
+        }
+    }
+    async isValidAdminSession(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isValidAdminSession(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isValidAdminSession(arg0);
+            return result;
+        }
+    }
+    async loginAsAdmin(arg0: AdminCredentials): Promise<AdminAuthResponse> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.loginAsAdmin(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.loginAsAdmin(arg0);
+            return result;
+        }
+    }
+    async logoutAdmin(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.logoutAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.logoutAdmin();
             return result;
         }
     }
@@ -698,13 +796,16 @@ export class Backend implements backendInterface {
         }
     }
 }
-function from_candid_UserRole_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n12(_uploadFile, _downloadFile, value);
+function from_candid_CreateSessionResponse_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CreateSessionResponse): CreateSessionResponse {
+    return from_candid_variant_n11(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n14(_uploadFile, _downloadFile, value);
 }
 function from_candid__CaffeineStorageRefillResult_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: __CaffeineStorageRefillResult): _CaffeineStorageRefillResult {
     return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
@@ -725,7 +826,34 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
     };
 }
-function from_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _AdminSession;
+} | {
+    failure: string;
+} | {
+    invalidCredentials: null;
+}): {
+    __kind__: "ok";
+    ok: AdminSession;
+} | {
+    __kind__: "failure";
+    failure: string;
+} | {
+    __kind__: "invalidCredentials";
+    invalidCredentials: null;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "failure" in value ? {
+        __kind__: "failure",
+        failure: value.failure
+    } : "invalidCredentials" in value ? {
+        __kind__: "invalidCredentials",
+        invalidCredentials: value.invalidCredentials
+    } : value;
+}
+function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;

@@ -24,6 +24,22 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const AdminCredentials = IDL.Record({
+  'password' : IDL.Text,
+  'email' : IDL.Text,
+});
+export const Time = IDL.Int;
+export const AdminSession = IDL.Record({
+  'principal' : IDL.Principal,
+  'createdAt' : Time,
+  'email' : IDL.Text,
+  'sessionToken' : IDL.Text,
+});
+export const CreateSessionResponse = IDL.Variant({
+  'ok' : AdminSession,
+  'failure' : IDL.Text,
+  'invalidCredentials' : IDL.Null,
+});
 export const Experience = IDL.Record({
   'id' : IDL.Nat,
   'title' : IDL.Text,
@@ -55,7 +71,6 @@ export const SocialLink = IDL.Record({
 });
 export const About = IDL.Record({ 'content' : IDL.Text });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
-export const Time = IDL.Int;
 export const ContactMessage = IDL.Record({
   'id' : IDL.Nat,
   'name' : IDL.Text,
@@ -64,6 +79,7 @@ export const ContactMessage = IDL.Record({
   'email' : IDL.Text,
   'message' : IDL.Text,
 });
+export const AdminAuthResponse = IDL.Record({ 'isAdmin' : IDL.Bool });
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -94,6 +110,11 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createAdminSession' : IDL.Func(
+      [AdminCredentials],
+      [CreateSessionResponse],
+      [],
+    ),
   'createExperience' : IDL.Func([Experience], [], []),
   'createProject' : IDL.Func([Project], [], []),
   'createSkill' : IDL.Func([Skill], [], []),
@@ -106,7 +127,7 @@ export const idlService = IDL.Service({
   'getAbout' : IDL.Func([], [About], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getContactMessages' : IDL.Func([], [IDL.Vec(ContactMessage)], ['query']),
+  'getContactMessages' : IDL.Func([], [IDL.Vec(ContactMessage)], []),
   'getExperiences' : IDL.Func([], [IDL.Vec(Experience)], ['query']),
   'getProjects' : IDL.Func([], [IDL.Vec(Project)], ['query']),
   'getSkills' : IDL.Func([], [IDL.Vec(Skill)], ['query']),
@@ -116,8 +137,12 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'hasActiveSession' : IDL.Func([], [IDL.Bool], ['query']),
   'initialize' : IDL.Func([], [], []),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isValidAdminSession' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+  'loginAsAdmin' : IDL.Func([AdminCredentials], [AdminAuthResponse], []),
+  'logoutAdmin' : IDL.Func([], [], []),
   'markMessageAsRead' : IDL.Func([IDL.Nat], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'submitContactMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
@@ -146,6 +171,22 @@ export const idlFactory = ({ IDL }) => {
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const AdminCredentials = IDL.Record({
+    'password' : IDL.Text,
+    'email' : IDL.Text,
+  });
+  const Time = IDL.Int;
+  const AdminSession = IDL.Record({
+    'principal' : IDL.Principal,
+    'createdAt' : Time,
+    'email' : IDL.Text,
+    'sessionToken' : IDL.Text,
+  });
+  const CreateSessionResponse = IDL.Variant({
+    'ok' : AdminSession,
+    'failure' : IDL.Text,
+    'invalidCredentials' : IDL.Null,
   });
   const Experience = IDL.Record({
     'id' : IDL.Nat,
@@ -178,7 +219,6 @@ export const idlFactory = ({ IDL }) => {
   });
   const About = IDL.Record({ 'content' : IDL.Text });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
-  const Time = IDL.Int;
   const ContactMessage = IDL.Record({
     'id' : IDL.Nat,
     'name' : IDL.Text,
@@ -187,6 +227,7 @@ export const idlFactory = ({ IDL }) => {
     'email' : IDL.Text,
     'message' : IDL.Text,
   });
+  const AdminAuthResponse = IDL.Record({ 'isAdmin' : IDL.Bool });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -217,6 +258,11 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createAdminSession' : IDL.Func(
+        [AdminCredentials],
+        [CreateSessionResponse],
+        [],
+      ),
     'createExperience' : IDL.Func([Experience], [], []),
     'createProject' : IDL.Func([Project], [], []),
     'createSkill' : IDL.Func([Skill], [], []),
@@ -229,7 +275,7 @@ export const idlFactory = ({ IDL }) => {
     'getAbout' : IDL.Func([], [About], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getContactMessages' : IDL.Func([], [IDL.Vec(ContactMessage)], ['query']),
+    'getContactMessages' : IDL.Func([], [IDL.Vec(ContactMessage)], []),
     'getExperiences' : IDL.Func([], [IDL.Vec(Experience)], ['query']),
     'getProjects' : IDL.Func([], [IDL.Vec(Project)], ['query']),
     'getSkills' : IDL.Func([], [IDL.Vec(Skill)], ['query']),
@@ -239,8 +285,12 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'hasActiveSession' : IDL.Func([], [IDL.Bool], ['query']),
     'initialize' : IDL.Func([], [], []),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isValidAdminSession' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'loginAsAdmin' : IDL.Func([AdminCredentials], [AdminAuthResponse], []),
+    'logoutAdmin' : IDL.Func([], [], []),
     'markMessageAsRead' : IDL.Func([IDL.Nat], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'submitContactMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),

@@ -1,17 +1,12 @@
-import { useInternetIdentity } from './useInternetIdentity';
-import { useIsCallerAdmin } from './useAdminQueries';
+import { useAdminSession } from './useAdminSession';
 
 export function useAdminGuard() {
-  const { identity, loginStatus } = useInternetIdentity();
-  const { data: isAdmin, isLoading: isCheckingAdmin } = useIsCallerAdmin();
-
-  const isAuthenticated = !!identity;
-  const isInitializing = loginStatus === 'initializing';
+  const { isAuthenticated, isLoading } = useAdminSession();
 
   return {
     isAuthenticated,
-    isAdmin: isAdmin ?? false,
-    isLoading: isInitializing || isCheckingAdmin,
-    isDenied: isAuthenticated && !isCheckingAdmin && !isAdmin,
+    isAdmin: isAuthenticated,
+    isLoading,
+    isDenied: false, // No longer used with email/password auth
   };
 }

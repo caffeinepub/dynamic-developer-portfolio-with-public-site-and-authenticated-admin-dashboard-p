@@ -7,6 +7,21 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface AdminAuthResponse {
+    isAdmin: boolean;
+}
+export type Time = bigint;
+export interface SocialLink {
+    id: bigint;
+    url: string;
+    platform: string;
+}
+export interface AdminSession {
+    principal: Principal;
+    createdAt: Time;
+    email: string;
+    sessionToken: string;
+}
 export interface ContactMessage {
     id: bigint;
     name: string;
@@ -15,17 +30,11 @@ export interface ContactMessage {
     email: string;
     message: string;
 }
-export type Time = bigint;
 export interface Skill {
     id: bigint;
     name: string;
     level: string;
     category: string;
-}
-export interface SocialLink {
-    id: bigint;
-    url: string;
-    platform: string;
 }
 export interface Experience {
     id: bigint;
@@ -38,6 +47,20 @@ export interface Experience {
 }
 export interface About {
     content: string;
+}
+export type CreateSessionResponse = {
+    __kind__: "ok";
+    ok: AdminSession;
+} | {
+    __kind__: "failure";
+    failure: string;
+} | {
+    __kind__: "invalidCredentials";
+    invalidCredentials: null;
+};
+export interface AdminCredentials {
+    password: string;
+    email: string;
 }
 export interface Project {
     id: bigint;
@@ -61,6 +84,7 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createAdminSession(credentials: AdminCredentials): Promise<CreateSessionResponse>;
     createExperience(experience: Experience): Promise<void>;
     createProject(project: Project): Promise<void>;
     createSkill(skill: Skill): Promise<void>;
@@ -79,8 +103,12 @@ export interface backendInterface {
     getSkills(): Promise<Array<Skill>>;
     getSocialLinks(): Promise<Array<SocialLink>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    hasActiveSession(): Promise<boolean>;
     initialize(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
+    isValidAdminSession(sessionToken: string): Promise<boolean>;
+    loginAsAdmin(credentials: AdminCredentials): Promise<AdminAuthResponse>;
+    logoutAdmin(): Promise<void>;
     markMessageAsRead(id: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     submitContactMessage(name: string, email: string, message: string): Promise<void>;

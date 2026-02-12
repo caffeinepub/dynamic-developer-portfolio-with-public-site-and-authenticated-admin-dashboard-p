@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-home-page-hero-typing-animation-word-list-the-typingwords-constant-in-frontend-src-pages-homepage-tsx-to-exactly-developer-designer-database-debugger-devops-in-that-order",
-      "featureTitle": "Update the Home page hero typing animation word list (the `typingWords` constant in `frontend/src/pages/HomePage.tsx`) to exactly: ['Developer','Designer','Database','Debugger','DevOps'] in that order.",
+      "featureId": "feature-ensure-that-after-a-successful-admin-email-password-login-the-ui-redirects-the-user-away-from-the-login-form-to-the-intended-admin-destination-defaulting-to-the-admin-dashboard-at-admin",
+      "featureTitle": "Ensure that after a successful admin email/password login, the UI redirects the user away from the login form to the intended admin destination (defaulting to the admin dashboard at `/admin`).",
       "files": [
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/auth/AdminEmailLoginForm.tsx",
+        "frontend/src/components/layout/AdminLayout.tsx",
+        "frontend/src/utils/adminRedirect.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,7 +19,28 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
+        "REQ-19"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-fix-admin-session-state-propagation-so-that-a-successful-login-updates-the-authenticated-state-consistently-across-the-admin-layout-guard-and-login-form-even-when-useadminsession-is-used-in-multiple-components",
+      "featureTitle": "Fix admin session state propagation so that a successful login updates the authenticated state consistently across the admin layout/guard and login form (even when `useAdminSession()` is used in multiple components).",
+      "files": [
+        "frontend/src/components/layout/AdminLayout.tsx",
+        "frontend/src/hooks/useAdminSession.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-20"
       ],
       "confidence": "high"
     }

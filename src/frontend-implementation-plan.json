@@ -1,20 +1,57 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update Home hero typing words to include “Debugger”",
+  "title": "Fix admin login redirect and session propagation for email/password admin auth",
   "requirements": [
     {
-      "id": "REQ-12",
-      "summary": "Update the Home page hero typing animation word list to include “Debugger” and match the exact requested order.",
+      "id": "REQ-19",
+      "summary": "Redirect to intended admin route (default /admin) after successful admin email/password login, while keeping invalid-credentials inline errors.",
       "acceptanceCriteria": [
-        "`frontend/src/pages/HomePage.tsx` defines `typingWords` with exactly 5 entries in this order: Developer, Designer, Database, Debugger, DevOps.",
-        "The Home hero headline continues to render as \"Full-Stack\" followed by the animated typing word, and the animation cycles through the updated list without runtime errors."
+        "When a user logs in successfully from the admin login form, the app navigates to `/admin` and displays the Admin Dashboard page content (not the login form).",
+        "If the user attempted to visit a specific admin sub-route (e.g. `/admin/projects`) while unauthenticated, after login the app navigates to that originally requested route instead of always going to `/admin`.",
+        "Invalid credentials continue to show an inline error and do not navigate."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomePage.tsx",
+          "path": "frontend/src/utils/adminRedirect.ts",
+          "operation": "create",
+          "description": "Add a small utility to persist, read, and clear an intended admin destination (e.g., via sessionStorage) for post-login navigation, defaulting to `/admin` when none exists."
+        },
+        {
+          "path": "frontend/src/components/layout/AdminLayout.tsx",
           "operation": "modify",
-          "description": "Replace the existing `typingWords` constant with exactly: ['Developer','Designer','Database','Debugger','DevOps'] (5 entries, in that order), without changing TypingWord behavior, animation settings, or other hero content."
+          "description": "When unauthenticated and the current route is within `/admin`, persist the originally requested admin path using the new admin redirect utility before rendering the login form (so deep links like `/admin/projects` can be restored after login)."
+        },
+        {
+          "path": "frontend/src/components/auth/AdminEmailLoginForm.tsx",
+          "operation": "modify",
+          "description": "After a successful login response, navigate (replace) to the persisted intended admin path (or `/admin` by default) and clear the stored redirect; keep existing inline error behavior and ensure no navigation occurs for invalid credentials or failures."
+        }
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "summary": "Make admin session state a single shared source of truth so useAdminSession/useAdminGuard stay consistent across components without reload, and logout reliably clears admin state.",
+      "acceptanceCriteria": [
+        "After login succeeds, `useAdminGuard()` reflects `isAuthenticated === true` without requiring a full page reload.",
+        "The admin login state remains consistent across components that call `useAdminSession()` (e.g., the login form and `AdminLayout`).",
+        "Logging out clears the session and returns the admin area to the login form on the next render."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useAdminSession.ts",
+          "operation": "modify",
+          "description": "Refactor session token handling to be shared across all hook instances (e.g., a module-level token store with subscription, or React Query-cached token) instead of per-hook local state; ensure login updates the shared token, triggers session validation refresh, and logout clears token + relevant cached admin auth state (without requiring a full reload)."
+        },
+        {
+          "path": "frontend/src/hooks/useAdminGuard.ts",
+          "operation": "modify",
+          "description": "Ensure the guard reflects the shared session/auth state from useAdminSession immediately after login/logout (no stale local state), and remains compatible with the existing AdminLayout logic."
+        },
+        {
+          "path": "frontend/src/components/layout/AdminLayout.tsx",
+          "operation": "modify",
+          "description": "Ensure logout flow results in the admin area rendering the login form on the next render (and clears any stored intended admin redirect if applicable), relying on the shared session state propagation rather than a page reload."
         }
       ]
     }

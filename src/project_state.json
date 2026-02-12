@@ -1,18 +1,21 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend and a secure admin dashboard to manage projects, skills, about content, and contact messages without code changes, built with Laravel + MySQL and Vue.js (or Blade) and deployment-ready for Linux/Nginx.",
+  "projectStateVersion": 13,
+  "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend and a secure admin dashboard to manage projects, skills, about content, and contact messages without code changes, built with Laravel + MySQL and Vue.js (or Blade), deployment-ready for Linux/Nginx, with admin authentication changed/extended to support email/password login (in addition to or replacing prior Internet Identity approach).",
   "architectural_notes": [
     "Tech stack: Laravel backend + MySQL database; frontend Vue.js or Blade with Bootstrap/Tailwind.",
     "Authentication to use Laravel Breeze or Jetstream for admin login.",
     "Admin panel must support full dynamic content management (projects, skills, about, contact messages).",
     "Deployment target: Linux server with Nginx/Apache; performance-focused and scalable.",
-    "Hero typing/rotating-text effect: set typingWords to ['Developer','Designer','Database','Debugger','DevOps']. Համընկնում է user-provided list/comments; replaces prior word list."
+    "Hero typing/rotating-text effect: set typingWords to ['Developer','Designer','Database','Debugger','DevOps']. Համընկնում է user-provided list/comments; replaces prior word list.",
+    "Decision: add/implement email+password admin authentication for the admin panel (likely via Laravel Breeze/Jetstream) instead of Internet Identity-only access; ensure /admin presents a login flow when unauthenticated."
   ],
   "known_issues": [
-    "Hero typing word list requirement is inconsistent across notes/features (previously included 'Data'; user now requests 'Debugger' instead)."
+    "Hero typing word list requirement is inconsistent across notes/features (previously included 'Data'; user now requests 'Debugger' instead).",
+    "Admin authentication approach is inconsistent across requirements/implementation (Internet Identity-only vs Laravel Breeze/Jetstream email/password).",
+    "Admin login flow bug: after successful admin login, user is not redirected to the admin dashboard."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-a-responsive-public-portfolio-website-with-sections-pages-home-hero-ctas-about-skills-projects-card-grid-experience-timeline-and-contact-form-social-links-using-the-exact-user-provided-english-copy-for-the-hero-and-about-sections",
@@ -101,6 +104,46 @@
         "REQ-12"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-admin-access-flow-so-that-visiting-admin-while-not-logged-in-shows-an-email-password-login-form-not-the-current-internet-identity-loginbutton-only-experience",
+      "title": "Update the frontend admin access flow so that visiting `/admin` while not logged in shows an email/password login form (not the current Internet Identity LoginButton-only experience).",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-frontend-session-storage-for-the-admin-login-e-g-storing-a-returned-session-token-and-update-admin-guarding-logic-to-use-the-new-backend-session-validation-rather-than-internet-identity-identity-state-for-admin-access-decisions",
+      "title": "Implement frontend session storage for the admin login (e.g., storing a returned session token) and update admin guarding logic to use the new backend session validation rather than Internet Identity identity state for admin access decisions.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-adjust-the-admin-ui-header-actions-to-reflect-the-new-auth-model-email-password-remove-or-de-emphasize-internet-identity-login-logout-controls-in-the-admin-area-so-the-admin-panel-login-logout-is-consistent-with-the-new-flow",
+      "title": "Adjust the admin UI header actions to reflect the new auth model (email/password): remove or de-emphasize Internet Identity login/logout controls in the admin area so the admin panel login/logout is consistent with the new flow.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-that-after-a-successful-admin-email-password-login-the-ui-redirects-the-user-away-from-the-login-form-to-the-intended-admin-destination-defaulting-to-the-admin-dashboard-at-admin",
+      "title": "Ensure that after a successful admin email/password login, the UI redirects the user away from the login form to the intended admin destination (defaulting to the admin dashboard at `/admin`).",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-admin-session-state-propagation-so-that-a-successful-login-updates-the-authenticated-state-consistently-across-the-admin-layout-guard-and-login-form-even-when-useadminsession-is-used-in-multiple-components",
+      "title": "Fix admin session state propagation so that a successful login updates the authenticated state consistently across the admin layout/guard and login form (even when `useAdminSession()` is used in multiple components).",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -176,6 +219,36 @@
       "id": "AR-14",
       "summary": "Update the hero headline text: replace/modify \"Full-Stack Developer\" to use a typing-style animation that cycles through multiple \"D\" words (e.g., Develop, Design, etc.), showing each word sequentially like typed text.",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add email/password-based admin authentication (login page at /admin or /login) so the admin panel can be accessed with credentials like admin@gmail.com / Admin@92505; migrate/replace prior Internet Identity-only gating as needed.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Implement email/password-based admin authentication in the Motoko backend, using the exact admin credentials: email `admin@gmail.com` and password `Admin@92505`. Provide backend APIs to (1) log in with email+password, (2) validate an existing admin session, and (3) log out.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Replace the current Internet Identity-only admin authorization checks in backend admin-only methods with checks based on the new email/password admin session mechanism (so admin CRUD works after email/password login even if the caller is not an Internet Identity admin principal).",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Add stable state and upgrade-safe persistence for the new admin credential and session data. Create `backend/migration.mo` to preserve existing portfolio data across upgrades while introducing new auth-related stable variables.",
+      "reqIds": [
+        "REQ-15"
+      ],
       "status": "pending"
     }
   ],
