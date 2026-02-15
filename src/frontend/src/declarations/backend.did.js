@@ -19,6 +19,7 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -70,6 +71,16 @@ export const SocialLink = IDL.Record({
   'platform' : IDL.Text,
 });
 export const About = IDL.Record({ 'content' : IDL.Text });
+export const AdminFileType = IDL.Variant({
+  'resume' : IDL.Null,
+  'avatar' : IDL.Null,
+});
+export const AdminFile = IDL.Record({
+  'blob' : ExternalBlob,
+  'name' : IDL.Text,
+  'fileType' : AdminFileType,
+  'uploadedAt' : Time,
+});
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const ContactMessage = IDL.Record({
   'id' : IDL.Nat,
@@ -109,6 +120,8 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'adminUploadAvatar' : IDL.Func([ExternalBlob, IDL.Text], [], []),
+  'adminUploadResume' : IDL.Func([ExternalBlob, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createAdminSession' : IDL.Func(
       [AdminCredentials],
@@ -125,11 +138,13 @@ export const idlService = IDL.Service({
   'deleteSkill' : IDL.Func([IDL.Nat], [], []),
   'deleteSocialLink' : IDL.Func([IDL.Nat], [], []),
   'getAbout' : IDL.Func([], [About], ['query']),
+  'getAvatar' : IDL.Func([], [IDL.Opt(AdminFile)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getContactMessages' : IDL.Func([], [IDL.Vec(ContactMessage)], []),
   'getExperiences' : IDL.Func([], [IDL.Vec(Experience)], ['query']),
   'getProjects' : IDL.Func([], [IDL.Vec(Project)], ['query']),
+  'getResume' : IDL.Func([], [IDL.Opt(AdminFile)], ['query']),
   'getSkills' : IDL.Func([], [IDL.Vec(Skill)], ['query']),
   'getSocialLinks' : IDL.Func([], [IDL.Vec(SocialLink)], ['query']),
   'getUserProfile' : IDL.Func(
@@ -167,6 +182,7 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -218,6 +234,16 @@ export const idlFactory = ({ IDL }) => {
     'platform' : IDL.Text,
   });
   const About = IDL.Record({ 'content' : IDL.Text });
+  const AdminFileType = IDL.Variant({
+    'resume' : IDL.Null,
+    'avatar' : IDL.Null,
+  });
+  const AdminFile = IDL.Record({
+    'blob' : ExternalBlob,
+    'name' : IDL.Text,
+    'fileType' : AdminFileType,
+    'uploadedAt' : Time,
+  });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const ContactMessage = IDL.Record({
     'id' : IDL.Nat,
@@ -257,6 +283,8 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'adminUploadAvatar' : IDL.Func([ExternalBlob, IDL.Text], [], []),
+    'adminUploadResume' : IDL.Func([ExternalBlob, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createAdminSession' : IDL.Func(
         [AdminCredentials],
@@ -273,11 +301,13 @@ export const idlFactory = ({ IDL }) => {
     'deleteSkill' : IDL.Func([IDL.Nat], [], []),
     'deleteSocialLink' : IDL.Func([IDL.Nat], [], []),
     'getAbout' : IDL.Func([], [About], ['query']),
+    'getAvatar' : IDL.Func([], [IDL.Opt(AdminFile)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getContactMessages' : IDL.Func([], [IDL.Vec(ContactMessage)], []),
     'getExperiences' : IDL.Func([], [IDL.Vec(Experience)], ['query']),
     'getProjects' : IDL.Func([], [IDL.Vec(Project)], ['query']),
+    'getResume' : IDL.Func([], [IDL.Opt(AdminFile)], ['query']),
     'getSkills' : IDL.Func([], [IDL.Vec(Skill)], ['query']),
     'getSocialLinks' : IDL.Func([], [IDL.Vec(SocialLink)], ['query']),
     'getUserProfile' : IDL.Func(

@@ -1,54 +1,53 @@
 {
   "kind": "build_request",
-  "title": "Show loading indicator during admin logout",
+  "title": "Simplify admin auth to single-admin session (remove role/permission assignment errors)",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-21",
-      "text": "Add a visible loading state when an authenticated admin clicks the Logout button so the user can clearly see that logout is in progress until the operation completes.",
-      "target": "frontend",
+      "id": "REQ-42",
+      "text": "Update backend admin authentication/authorization to assume a single admin user and authorize admin-only operations purely by the existing email/password admin session (no role assignment, no multi-user roles).",
+      "target": "backend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "Please add a loader on logout so the user knows the action is processing"
+          "why not login admin yek hi user hoga"
         ]
       },
       "acceptanceCriteria": [
-        "When the admin clicks the Logout button in the admin header (AdminLayout), the button immediately switches to a loading presentation (e.g., spinner icon + text \"Logging out...\") and becomes disabled until the logout request finishes.",
-        "While logout is pending, repeated clicks do not trigger multiple logout requests.",
-        "After logout completes, the admin session token is cleared as it is today and the user is shown the unauthenticated admin experience (login form / guard behavior) without leaving the UI in a loading state.",
-        "All user-facing text for the loading state is in English."
+        "Calling `createAdminSession` with the correct credentials (`admin@gmail.com` / `Admin@92505`) succeeds and returns `#ok` without any authorization/role-assignment error.",
+        "The backend does not attempt to assign roles/permissions to principals during login (no role/permission assignment step is required for a single-admin setup).",
+        "All admin-only methods currently protected by `AccessControl.hasPermission(... #admin)` are instead protected by a single-admin-session check (active session for the caller, not expired).",
+        "When an unauthenticated or expired-session caller invokes an admin-only method, the backend traps with an Unauthorized error message (consistent, human-readable, and includes the word \"Unauthorized\")."
       ]
     },
     {
-      "id": "REQ-22",
-      "text": "Expose a dedicated logout pending/loading flag from the admin session hook so UI components can reliably render a loader during logout without conflating it with login or session validation loading.",
+      "id": "REQ-43",
+      "text": "Ensure the admin login UI shows a clear login error when backend login fails due to authorization/role/permission issues, and does not display misleading \"assign user roles\" messaging to the admin user.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-5"
         ],
         "quotes": [
-          "Please add a loader on logout so the user knows the action is processing"
+          "why not login admin yek hi user hoga"
         ]
       },
       "acceptanceCriteria": [
-        "The admin session hook returns a boolean that is true while the logout mutation is pending.",
-        "AdminLayout uses this flag to render the Logout loader state (spinner + \"Logging out...\") and disable the Logout button while pending.",
-        "Existing login/session validation loading behaviors continue to work and are not broken by adding the logout pending flag."
+        "If `createAdminSession` throws/traps for any reason, the Admin Login form displays a user-friendly error in the existing error alert area.",
+        "Successful login continues to redirect to the intended admin destination as currently implemented.",
+        "The login screen does not show backend errors referring to assigning roles/permissions (e.g., \"Only admins can assign user roles\") in normal operation with correct credentials."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/components/ui (Shadcn components are read-only).",
-    "Do not edit any frontend paths marked immutable in SYSTEM_CONTEXT."
+    "Backend must remain single-actor; all Motoko logic stays in `backend/main.mo`.",
+    "Do not edit any files under `frontend/src/components/ui` or the immutable hook/provider entry paths listed in SYSTEM_CONTEXT."
   ],
   "nonGoals": [
-    "Changing backend logout behavior or session invalidation logic.",
-    "Adding new authentication methods or altering the admin login flow beyond displaying a logout loader.",
-    "Adding global page loaders unrelated to logout."
+    "Adding support for multiple admins, roles, or user management UI.",
+    "Adding third-party authentication providers."
   ],
   "imageRequirements": {
     "required": [],
@@ -57,7 +56,9 @@
   "userProfileUpdate": {
     "goalsToAdd": [],
     "goalsToRemove": [],
-    "preferencesToAdd": [],
+    "preferencesToAdd": [
+      "Use a single-admin (one user) model for admin authentication/authorization."
+    ],
     "preferencesToRemove": [],
     "miscToAdd": [],
     "miscToRemove": [],

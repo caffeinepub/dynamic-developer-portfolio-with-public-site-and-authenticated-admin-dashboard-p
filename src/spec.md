@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Show a clear loading indicator while an authenticated admin logout request is in progress.
+**Goal:** Simplify admin authentication/authorization to a single-admin session model and remove role/permission assignment errors during login and admin operations.
 
 **Planned changes:**
-- Add a dedicated `logoutPending` (or equivalent) boolean to the admin session hook that is true only while the logout action is pending.
-- Update the AdminLayout header Logout button to use the logout pending flag to: (1) switch to a loading presentation (spinner + “Logging out...”), and (2) disable the button until logout completes.
-- Ensure repeated clicks during the pending state do not trigger multiple logout requests, and that after logout finishes the UI transitions to the unauthenticated admin experience without remaining in a loading state.
+- Backend: Update admin auth to assume one admin user authenticated via the existing email/password session only, with no role/permission assignment step during login.
+- Backend: Replace current `AccessControl.hasPermission(... #admin)` protections on admin-only methods with a single-admin-session check (active, not expired), and trap with a consistent human-readable "Unauthorized" error for unauthenticated/expired callers.
+- Frontend: Ensure Admin Login displays a clear, user-friendly error when `createAdminSession` fails, and avoid showing misleading role/permission assignment messaging.
 
-**User-visible outcome:** When an admin clicks Logout, the button immediately shows a disabled “Logging out...” loader until logout completes, then the admin is returned to the unauthenticated (login/guard) experience.
+**User-visible outcome:** Admin can log in using `admin@gmail.com` / `Admin@92505` without role/permission-related errors, is correctly redirected on success, and sees a clear login error on failure; admin-only actions are accessible only with a valid, unexpired admin session and otherwise return an "Unauthorized" error.

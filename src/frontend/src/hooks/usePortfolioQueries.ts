@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { About, Skill, Project, Experience, SocialLink } from '../backend';
+import type { About, Skill, Project, Experience, SocialLink, AdminFile } from '../backend';
+import { unwrapOption } from '../utils/motokoOption';
 
 export function useGetAbout() {
   const { actor, isFetching } = useActor();
@@ -62,6 +63,34 @@ export function useGetSocialLinks() {
     queryFn: async () => {
       if (!actor) return [];
       return actor.getSocialLinks();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetResume() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<AdminFile | null>({
+    queryKey: ['resume'],
+    queryFn: async () => {
+      if (!actor) return null;
+      const result = await actor.getResume();
+      return unwrapOption(result);
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetAvatar() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<AdminFile | null>({
+    queryKey: ['avatar'],
+    queryFn: async () => {
+      if (!actor) return null;
+      const result = await actor.getAvatar();
+      return unwrapOption(result);
     },
     enabled: !!actor && !isFetching,
   });

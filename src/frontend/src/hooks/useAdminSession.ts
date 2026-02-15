@@ -21,6 +21,14 @@ function subscribeToToken(callback: (token: string | null) => void) {
   };
 }
 
+// Exported helper to clear admin session (non-hook, can be called from anywhere)
+export function clearAdminSession() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+  }
+  notifySubscribers(null);
+}
+
 export function useAdminSession() {
   const { actor, isFetching: actorFetching } = useActor();
   const queryClient = useQueryClient();
@@ -50,19 +58,36 @@ export function useAdminSession() {
     queryKey: ['adminSessionValidation', sessionToken],
     queryFn: async () => {
       if (!actor || !sessionToken) return false;
-      return actor.isValidAdminSession(sessionToken);
+      const isValid = await actor.isValidAdminSession(sessionToken);
+      
+      // If validation fails, clear the invalid token
+      if (!isValid && sessionToken) {
+        clearAdminSession();
+        // Clear admin-related queries when session is invalid
+        queryClient.removeQueries({ queryKey: ['adminSessionValidation'] });
+        queryClient.removeQueries({ queryKey: ['contactMessages'] });
+        queryClient.removeQueries({ queryKey: ['currentUserProfile'] });
+      }
+      
+      return isValid;
     },
     enabled: !!actor && !actorFetching && !!sessionToken,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Login mutation
+  // Login mutation with enhanced error handling
   const loginMutation = useMutation({
     mutationFn: async (credentials: AdminCredentials) => {
       if (!actor) throw new Error('Actor not available');
-      const response: CreateSessionResponse = await actor.createAdminSession(credentials);
-      return response;
+      
+      try {
+        const response: CreateSessionResponse = await actor.createAdminSession(credentials);
+        return response;
+      } catch (err: any) {
+        // Wrap backend traps/throws into a standard Error for consistent handling
+        throw new Error(err.message || 'Login request failed');
+      }
     },
     onSuccess: (response) => {
       if (response.__kind__ === 'ok') {
@@ -82,8 +107,7 @@ export function useAdminSession() {
       await actor.logoutAdmin();
     },
     onSuccess: () => {
-      localStorage.removeItem(ADMIN_SESSION_KEY);
-      notifySubscribers(null);
+      clearAdminSession();
       // Clear all admin-related queries
       queryClient.removeQueries({ queryKey: ['adminSessionValidation'] });
       queryClient.removeQueries({ queryKey: ['contactMessages'] });
@@ -101,7 +125,14 @@ export function useAdminSession() {
   };
 
   const isAuthenticated = sessionValidation.data === true;
-  const isLoading = actorFetching || sessionValidation.isLoading || loginMutation.isPending;
+  
+  // Compute isLoading based on real work:
+  // - When no token exists: only show loading during login submission
+  // - When token exists: show loading during actor init or validation
+  const isLoading = sessionToken 
+    ? (actorFetching || sessionValidation.isLoading)
+    : loginMutation.isPending;
+  
   const isLogoutPending = logoutMutation.isPending;
 
   return {
@@ -113,5 +144,6 @@ export function useAdminSession() {
     isLoginError: loginMutation.isError,
     loginError: loginMutation.error,
     sessionToken,
+    isLoginPending: loginMutation.isPending,
   };
 }

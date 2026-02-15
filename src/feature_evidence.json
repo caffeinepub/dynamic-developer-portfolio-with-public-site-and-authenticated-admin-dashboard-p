@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-visible-loading-state-when-an-authenticated-admin-clicks-the-logout-button-so-the-user-can-clearly-see-that-logout-is-in-progress-until-the-operation-completes",
-      "featureTitle": "Add a visible loading state when an authenticated admin clicks the Logout button so the user can clearly see that logout is in progress until the operation completes.",
+      "featureId": "feature-ensure-the-admin-login-ui-shows-a-clear-login-error-when-backend-login-fails-due-to-authorization-role-permission-issues-and-does-not-display-misleading-assign-user-roles-messaging-to-the-admin-user",
+      "featureTitle": "Ensure the admin login UI shows a clear login error when backend login fails due to authorization/role/permission issues, and does not display misleading \"assign user roles\" messaging to the admin user.",
       "files": [
-        "frontend/src/components/layout/AdminLayout.tsx"
+        "frontend/src/components/auth/AdminEmailLoginForm.tsx",
+        "frontend/src/hooks/useAdminSession.ts",
+        "frontend/src/utils/adminAuthErrors.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,28 +19,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-21"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-expose-a-dedicated-logout-pending-loading-flag-from-the-admin-session-hook-so-ui-components-can-reliably-render-a-loader-during-logout-without-conflating-it-with-login-or-session-validation-loading",
-      "featureTitle": "Expose a dedicated logout pending/loading flag from the admin session hook so UI components can reliably render a loader during logout without conflating it with login or session validation loading.",
-      "files": [
-        "frontend/src/components/layout/AdminLayout.tsx",
-        "frontend/src/hooks/useAdminSession.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-22"
+        "REQ-43"
       ],
       "confidence": "high"
     }

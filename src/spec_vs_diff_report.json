@@ -1,24 +1,44 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T07:37:58.219Z",
-  "summary": "REQ-21 and REQ-22 appear implemented: AdminLayout switches the Logout button to a disabled loading state with spinner + English text \"Logging out...\" and prevents repeat requests while pending; useAdminSession now exposes a dedicated `isLogoutPending` flag driven by the logout mutation pending state and continues clearing the session token on successful logout.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-15T12:56:23.667Z",
+  "summary": "Frontend adds normalized, user-friendly admin login error handling and avoids role/permission wording. Backend adds email/password session creation but still appears to retain authorization mixins and does not provide clear evidence that all admin-only methods have been switched from permission checks to single-session validation with consistent Unauthorized traps. A new Motoko migration module was added despite the constraint to keep Motoko logic in backend/main.mo.",
+  "missing_requirements": [
     {
-      "description": "Updated project metadata/summary files (non-runtime) not explicitly requested by the BuildRequest.",
-      "reason": "The BuildRequest only asks for a logout loading indicator and a logout pending flag; changes to project tracking/docs are not part of the requirements.",
+      "id": "REQ-42",
+      "requirement": "All admin-only methods currently protected by AccessControl.hasPermission(... #admin) are instead protected by a single-admin-session check (active session for the caller, not expired).",
+      "reason": "backend/main.mo still initializes AccessControl state and includes MixinAuthorization, suggesting permission-based authorization remains in place; the diff excerpt does not show any systematic replacement of hasPermission checks with session validation across admin-only methods.",
       "evidence": [
-        "frontend-file-summaries.txt",
-        "project_state.json"
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-42",
+      "requirement": "When an unauthenticated or expired-session caller invokes an admin-only method, the backend traps with an Unauthorized error message (consistent, human-readable, and includes the word \"Unauthorized\").",
+      "reason": "The diff excerpt shows session creation and a session timeout constant, but does not show admin-only method guards or trap messages for unauthorized/expired sessions; no evidence of a consistent Unauthorized trap message is present in the provided backend diff snippet.",
+      "evidence": [
+        "backend/main.mo"
       ]
     }
   ],
-  "confidence": 0.86,
+  "hallucinated_features": [
+    {
+      "description": "Added a new Motoko migration module (backend/migration.mo) and wired it into the actor via (with migration = Migration.run).",
+      "reason": "The BuildRequest constraints state all Motoko logic must stay in backend/main.mo; adding backend/migration.mo introduces new Motoko logic outside main.mo and was not requested by REQ-42/REQ-43.",
+      "evidence": [
+        "backend/migration.mo",
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "confidence": 0.62,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/layout/AdminLayout.tsx",
+    "frontend/src/components/auth/AdminEmailLoginForm.tsx",
     "frontend/src/hooks/useAdminSession.ts",
+    "frontend/src/utils/adminAuthErrors.ts",
     "project_state.json"
   ]
 }

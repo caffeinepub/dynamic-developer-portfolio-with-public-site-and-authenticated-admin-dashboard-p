@@ -13,6 +13,14 @@ import type { Principal } from '@icp-sdk/core/principal';
 export interface About { 'content' : string }
 export interface AdminAuthResponse { 'isAdmin' : boolean }
 export interface AdminCredentials { 'password' : string, 'email' : string }
+export interface AdminFile {
+  'blob' : ExternalBlob,
+  'name' : string,
+  'fileType' : AdminFileType,
+  'uploadedAt' : Time,
+}
+export type AdminFileType = { 'resume' : null } |
+  { 'avatar' : null };
 export interface AdminSession {
   'principal' : Principal,
   'createdAt' : Time,
@@ -39,6 +47,7 @@ export interface Experience {
   'location' : string,
   'startDate' : string,
 }
+export type ExternalBlob = Uint8Array;
 export interface Project {
   'id' : bigint,
   'title' : string,
@@ -92,6 +101,8 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'adminUploadAvatar' : ActorMethod<[ExternalBlob, string], undefined>,
+  'adminUploadResume' : ActorMethod<[ExternalBlob, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createAdminSession' : ActorMethod<[AdminCredentials], CreateSessionResponse>,
   'createExperience' : ActorMethod<[Experience], undefined>,
@@ -104,11 +115,13 @@ export interface _SERVICE {
   'deleteSkill' : ActorMethod<[bigint], undefined>,
   'deleteSocialLink' : ActorMethod<[bigint], undefined>,
   'getAbout' : ActorMethod<[], About>,
+  'getAvatar' : ActorMethod<[], [] | [AdminFile]>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getContactMessages' : ActorMethod<[], Array<ContactMessage>>,
   'getExperiences' : ActorMethod<[], Array<Experience>>,
   'getProjects' : ActorMethod<[], Array<Project>>,
+  'getResume' : ActorMethod<[], [] | [AdminFile]>,
   'getSkills' : ActorMethod<[], Array<Skill>>,
   'getSocialLinks' : ActorMethod<[], Array<SocialLink>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,

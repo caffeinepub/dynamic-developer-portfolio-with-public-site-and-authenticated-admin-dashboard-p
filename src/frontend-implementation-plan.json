@@ -1,43 +1,31 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Admin logout loading indicator and dedicated pending flag",
+  "title": "Admin login: user-friendly errors and remove role/permission messaging",
   "requirements": [
     {
-      "id": "REQ-21",
-      "summary": "Show a visible, disabled loading state on the AdminLayout Logout button while admin logout is in progress.",
+      "id": "REQ-43",
+      "summary": "Improve Admin Login error handling to show clear, user-friendly messages on backend failures and suppress misleading role/permission assignment wording.",
       "acceptanceCriteria": [
-        "When the admin clicks the Logout button in the admin header (AdminLayout), the button immediately switches to a loading presentation (e.g., spinner icon + text \"Logging out...\") and becomes disabled until the logout request finishes.",
-        "While logout is pending, repeated clicks do not trigger multiple logout requests.",
-        "After logout completes, the admin session token is cleared as it is today and the user is shown the unauthenticated admin experience (login form / guard behavior) without leaving the UI in a loading state.",
-        "All user-facing text for the loading state is in English."
+        "If `createAdminSession` throws/traps for any reason, the Admin Login form displays a user-friendly error in the existing error alert area.",
+        "Successful login continues to redirect to the intended admin destination as currently implemented.",
+        "The login screen does not show backend errors referring to assigning roles/permissions (e.g., \"Only admins can assign user roles\") in normal operation with correct credentials."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/AdminLayout.tsx",
+          "path": "frontend/src/utils/adminAuthErrors.ts",
+          "operation": "create",
+          "description": "Add a small helper to normalize/sanitize admin-login errors into user-friendly messages (e.g., map Unauthorized/role/permission-assignment related backend text to a clear login failure message without referencing roles/permissions)."
+        },
+        {
+          "path": "frontend/src/components/auth/AdminEmailLoginForm.tsx",
           "operation": "modify",
-          "description": "Update the Logout button in AdminLayout to render a pending UI state (spinner icon + English text \"Logging out...\") and disable interaction while logout is pending; ensure the click handler is guarded so multiple logout requests cannot be triggered. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "summary": "Expose a dedicated isLogoutPending flag from the admin session hook and consume it in AdminLayout for logout-only loading UI.",
-      "acceptanceCriteria": [
-        "The admin session hook returns a boolean that is true while the logout mutation is pending.",
-        "AdminLayout uses this flag to render the Logout loader state (spinner + \"Logging out...\") and disable the Logout button while pending.",
-        "Existing login/session validation loading behaviors continue to work and are not broken by adding the logout pending flag."
-      ],
-      "file_operations": [
+          "description": "Use the new adminAuthErrors helper to (1) display friendly errors when the backend traps/throws and (2) sanitize `CreateSessionResponse.__kind__ === 'failure'` messages so they never surface role/permission-assignment wording in the alert area."
+        },
         {
           "path": "frontend/src/hooks/useAdminSession.ts",
           "operation": "modify",
-          "description": "Extend useAdminSession to expose a dedicated boolean (e.g., isLogoutPending) derived from the logout mutation pending state, without conflating it with existing isLoading for login/session validation; keep existing behaviors intact."
-        },
-        {
-          "path": "frontend/src/components/layout/AdminLayout.tsx",
-          "operation": "modify",
-          "description": "Consume the new useAdminSession logout-pending flag to drive the Logout button's loading presentation and disabled state, ensuring logout UI state is independent from login/session validation loading. Verify the component's usage instructions before implementing."
+          "description": "Harden the login mutation error surface for the UI by ensuring thrown/trapped errors from `createAdminSession` are propagated as a standard `Error` message suitable for user-friendly handling (paired with the sanitizer in the login form)."
         }
       ]
     }

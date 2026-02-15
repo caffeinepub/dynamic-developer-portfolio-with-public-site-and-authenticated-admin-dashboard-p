@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FolderKanban, Lightbulb, User, Briefcase, Link as LinkIcon, Mail } from 'lucide-react';
+import { FolderKanban, Lightbulb, User, Briefcase, Link as LinkIcon, Mail, FileText, Image } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const adminSections = [
@@ -45,6 +45,20 @@ export default function AdminDashboardPage() {
       icon: Mail,
       path: '/admin/messages',
       color: 'text-red-500',
+    },
+    {
+      title: 'Resume',
+      description: 'Upload and manage your resume',
+      icon: FileText,
+      path: '/admin/resume',
+      color: 'text-orange-500',
+    },
+    {
+      title: 'Avatar',
+      description: 'Update your profile avatar',
+      icon: Image,
+      path: '/admin/avatar',
+      color: 'text-cyan-500',
     },
   ];
 

@@ -2,6 +2,8 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Download, Mail } from 'lucide-react';
 import TypingWord from '@/components/home/TypingWord';
+import { useGetResume } from '../hooks/usePortfolioQueries';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function HomePage() {
   const typingWords = [
@@ -11,6 +13,30 @@ export default function HomePage() {
     'Debugger',       // Problem-solving / code fixing
     'DevOps'          // Deployment & server automation
   ];
+
+  const { data: resumeFile, isLoading: resumeLoading } = useGetResume();
+
+  const handleResumeDownload = () => {
+    if (resumeFile?.blob) {
+      const url = resumeFile.blob.getDirectURL();
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = resumeFile.name || 'resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // Fallback to static resume if no admin-uploaded resume exists
+      const link = document.createElement('a');
+      link.href = '/assets/resume.pdf';
+      link.download = 'resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const isResumeAvailable = !resumeLoading && (resumeFile !== null || true); // Always available (fallback exists)
 
   return (
     <div className="relative">
@@ -42,39 +68,30 @@ export default function HomePage() {
                   Contact Me
                 </Button>
               </Link>
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto" asChild>
-                <a href="/assets/resume.pdf" download>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Resume
-                </a>
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="w-full sm:w-auto">
+                      <Button 
+                        size="lg" 
+                        variant="secondary" 
+                        className="w-full sm:w-auto"
+                        onClick={handleResumeDownload}
+                        disabled={!isResumeAvailable}
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Resume
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  {!isResumeAvailable && (
+                    <TooltipContent>
+                      <p>Resume not available</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Links Section */}
-      <section className="border-t bg-muted/30 py-16">
-        <div className="container">
-          <div className="grid gap-6 md:grid-cols-3">
-            <Link to="/about" className="group">
-              <div className="rounded-lg border bg-card p-6 transition-all hover:shadow-md">
-                <h3 className="mb-2 text-xl font-semibold group-hover:text-primary">About Me</h3>
-                <p className="text-sm text-muted-foreground">Learn more about my background and expertise</p>
-              </div>
-            </Link>
-            <Link to="/skills" className="group">
-              <div className="rounded-lg border bg-card p-6 transition-all hover:shadow-md">
-                <h3 className="mb-2 text-xl font-semibold group-hover:text-primary">Skills</h3>
-                <p className="text-sm text-muted-foreground">Explore my technical skills and proficiencies</p>
-              </div>
-            </Link>
-            <Link to="/experience" className="group">
-              <div className="rounded-lg border bg-card p-6 transition-all hover:shadow-md">
-                <h3 className="mb-2 text-xl font-semibold group-hover:text-primary">Experience</h3>
-                <p className="text-sm text-muted-foreground">View my professional journey and achievements</p>
-              </div>
-            </Link>
           </div>
         </div>
       </section>

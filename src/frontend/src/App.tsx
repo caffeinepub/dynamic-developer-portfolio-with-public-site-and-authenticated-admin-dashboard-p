@@ -14,6 +14,8 @@ import AdminAboutPage from './pages/admin/AdminAboutPage';
 import AdminExperiencePage from './pages/admin/AdminExperiencePage';
 import AdminSocialLinksPage from './pages/admin/AdminSocialLinksPage';
 import AdminMessagesPage from './pages/admin/AdminMessagesPage';
+import AdminResumePage from './pages/admin/AdminResumePage';
+import AdminAvatarPage from './pages/admin/AdminAvatarPage';
 import PublicLayout from './components/layout/PublicLayout';
 import AdminLayout from './components/layout/AdminLayout';
 import { useInitializeSeed } from './hooks/useInitializeSeed';
@@ -117,6 +119,18 @@ const adminMessagesRoute = createRoute({
   component: AdminMessagesPage,
 });
 
+const adminResumeRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: '/resume',
+  component: AdminResumePage,
+});
+
+const adminAvatarRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: '/avatar',
+  component: AdminAvatarPage,
+});
+
 const routeTree = rootRoute.addChildren([
   publicLayoutRoute.addChildren([
     homeRoute,
@@ -134,6 +148,8 @@ const routeTree = rootRoute.addChildren([
     adminExperienceRoute,
     adminSocialLinksRoute,
     adminMessagesRoute,
+    adminResumeRoute,
+    adminAvatarRoute,
   ]),
 ]);
 

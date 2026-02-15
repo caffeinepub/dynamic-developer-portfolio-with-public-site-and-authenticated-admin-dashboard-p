@@ -156,11 +156,11 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <a
-                  href="mailto:contact@example.com"
+                  href="mailto:bajrangiyadav330@gmail.com"
                   className="flex items-center gap-3 rounded-lg border p-4 transition-all hover:bg-accent hover:shadow-sm"
                 >
                   <Mail className="h-5 w-5" />
-                  <span className="font-medium">contact@example.com</span>
+                  <span className="font-medium">bajrangiyadav330@gmail.com</span>
                 </a>
               </CardContent>
             </Card>

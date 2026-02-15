@@ -1,19 +1,25 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
-  "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend and a secure admin dashboard to manage projects, skills, about content, and contact messages without code changes, built with Laravel + MySQL and Vue.js (or Blade), deployment-ready for Linux/Nginx, with admin authentication changed/extended to support email/password login (in addition to or replacing prior Internet Identity approach).",
+  "projectStateVersion": 27,
+  "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend, SEO optimization, and a secure admin dashboard to manage projects, skills, about content, contact messages, resume, and developer avatar without code changes, built with Laravel + MySQL and Vue.js (or Blade), deployment-ready for Linux/Nginx, with admin authentication using email/password login.",
   "architectural_notes": [
     "Tech stack: Laravel backend + MySQL database; frontend Vue.js or Blade with Bootstrap/Tailwind.",
     "Authentication to use Laravel Breeze or Jetstream for admin login.",
     "Admin panel must support full dynamic content management (projects, skills, about, contact messages).",
     "Deployment target: Linux server with Nginx/Apache; performance-focused and scalable.",
     "Hero typing/rotating-text effect: set typingWords to ['Developer','Designer','Database','Debugger','DevOps']. Համընկնում է user-provided list/comments; replaces prior word list.",
-    "Decision: add/implement email+password admin authentication for the admin panel (likely via Laravel Breeze/Jetstream) instead of Internet Identity-only access; ensure /admin presents a login flow when unauthenticated."
+    "Decision: add/implement email+password admin authentication for the admin panel (likely via Laravel Breeze/Jetstream) instead of Internet Identity-only access; ensure /admin presents a login flow when unauthenticated.",
+    "Direct contact email should be configurable (admin-managed or env/config-driven) and displayed consistently across the site.",
+    "Introduce media/file handling for admin-managed assets (resume PDF and avatar image): upload, storage path, validation, and public serving.",
+    "SEO: implement per-page meta tags (title/description), Open Graph/Twitter cards, sitemap.xml + robots.txt, canonical URLs, and (where appropriate) JSON-LD structured data.",
+    "Assumption raised: admin area may only need to support a single admin user (no multi-user accounts/roles), potentially allowing a simplified authentication model."
   ],
   "known_issues": [
     "Hero typing word list requirement is inconsistent across notes/features (previously included 'Data'; user now requests 'Debugger' instead).",
     "Admin authentication approach is inconsistent across requirements/implementation (Internet Identity-only vs Laravel Breeze/Jetstream email/password).",
-    "Admin login flow bug: after successful admin login, user is not redirected to the admin dashboard."
+    "Admin login flow bug: after successful admin login, user is not redirected to the admin dashboard.",
+    "Resume uploading/management feature is not working as expected.",
+    "Developer avatar upload/selection/display feature is not working as expected."
   ],
   "isFixRequest": false,
   "existing_features": [
@@ -160,6 +166,126 @@
         "REQ-22"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-the-admin-unauthenticated-experience-so-it-never-gets-stuck-on-the-full-page-loading-screen-and-instead-reliably-shows-the-email-password-admin-login-form-when-there-is-no-stored-admin-session-token",
+      "title": "Fix the `/admin` unauthenticated experience so it never gets stuck on the full-page \"Loading...\" screen and instead reliably shows the email/password Admin login form when there is no stored admin session token.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-useadminsession-so-its-isloading-value-reflects-real-loading-work-and-does-not-become-true-indefinitely-due-to-react-query-s-initial-disabled-query-state-ensure-isloading-is-false-when-sessiontoken-is-null-and-no-login-mutation-is-pending",
+      "title": "Update `useAdminSession()` so its `isLoading` value reflects real loading work and does not become true indefinitely due to React Query's initial/disabled query state; ensure `isLoading` is false when `sessionToken` is null and no login mutation is pending.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-duplicate-competing-admin-session-state-consumers-in-the-admin-layout-by-ensuring-adminlayout-derives-isauthenticated-isloading-from-a-single-useadminsession-usage-and-avoid-separately-calling-useadminguard-there-so-the-admin-guard-login-form-and-header-logout-controls-share-consistent-state",
+      "title": "Remove duplicate/competing admin-session state consumers in the admin layout by ensuring `AdminLayout` derives `isAuthenticated`/`isLoading` from a single `useAdminSession()` usage (and avoid separately calling `useAdminGuard()` there), so the admin guard, login form, and header/logout controls share consistent state.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-portfolio-s-displayed-linked-direct-email-address-to-bajrangiyadav330-gmail-com-wherever-it-appears-as-a-direct-email-link-including-the-direct-email-card-on-the-contact-page",
+      "title": "Update the portfolio's displayed/linked direct email address to `bajrangiyadav330@gmail.com` wherever it appears as a direct email link (including the \"Direct Email\" card on the Contact page).",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-public-download-resume-ux-to-download-the-latest-admin-uploaded-resume-with-a-sensible-fallback-when-no-resume-has-been-uploaded-yet",
+      "title": "Update the public \"Download Resume\" UX to download the latest admin-uploaded resume (with a sensible fallback when no resume has been uploaded yet).",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-dashboard-feature-to-upload-replace-the-resume-file-including-basic-validation-and-clear-success-error-feedback",
+      "title": "Add an Admin Dashboard feature to upload/replace the resume file, including basic validation and clear success/error feedback.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-dashboard-feature-to-upload-select-the-developer-avatar-and-update-the-public-site-to-display-the-selected-avatar-dynamically",
+      "title": "Add an Admin Dashboard feature to upload/select the developer avatar and update the public site to display the selected avatar dynamically.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-frontend-query-typing-option-unwrapping-for-getresume-and-getavatar-results-so-the-ui-reliably-detects-when-a-file-exists-and-correctly-reads-blob-name-and-uploadedat-motoko-optional-types-must-be-handled-correctly",
+      "title": "Fix frontend query typing/option-unwrapping for `getResume()` and `getAvatar()` results so the UI reliably detects when a file exists and correctly reads `blob`, `name`, and `uploadedAt` (Motoko optional types must be handled correctly).",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-public-facing-resume-download-and-avatar-display-to-use-the-latest-admin-uploaded-files-when-present-and-fall-back-gracefully-when-none-exists-resume-existing-static-fallback-avatar-assets-generated-avatar-dim-512x512-png",
+      "title": "Fix the public-facing resume download and avatar display to use the latest admin-uploaded files when present, and fall back gracefully when none exists (resume: existing static fallback; avatar: `/assets/generated/avatar.dim_512x512.png`).",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-route-aware-seo-head-management-for-the-react-spa-so-each-public-page-sets-an-appropriate-document-title-and-seo-meta-tags-description-canonical-url-open-graph-twitter-card-and-ensure-admin-routes-are-marked-as-noindex",
+      "title": "Implement route-aware SEO head management for the React SPA so each public page sets an appropriate document title and SEO meta tags (description, canonical URL, Open Graph, Twitter Card), and ensure admin routes are marked as noindex.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-static-robots-txt-and-sitemap-xml-to-the-frontend-public-assets-suitable-for-a-single-page-portfolio-with-the-existing-public-routes-and-exclude-admin-routes-from-indexing",
+      "title": "Add a static `robots.txt` and `sitemap.xml` to the frontend public assets suitable for a single-page portfolio with the existing public routes, and exclude admin routes from indexing.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-basic-json-ld-structured-data-for-the-portfolio-site-website-person-professional-profile-on-public-pages-to-improve-search-result-enrichment",
+      "title": "Add basic JSON-LD structured data for the portfolio site (Website + Person/Professional profile) on public pages to improve search result enrichment.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-baseline-html-head-in-frontend-index-html-to-include-sensible-default-seo-tags-that-are-safe-as-fallbacks-while-allowing-the-route-aware-seo-system-to-override-them-at-runtime",
+      "title": "Update the baseline HTML head in `frontend/index.html` to include sensible default SEO tags that are safe as fallbacks, while allowing the route-aware SEO system to override them at runtime.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-the-admin-experience-page-ux-so-that-when-an-experience-create-update-delete-request-fails-due-to-authorization-the-ui-clearly-prompts-the-admin-to-re-login-and-does-not-silently-fail",
+      "title": "Improve the Admin Experience page UX so that when an Experience create/update/delete request fails due to authorization, the UI clearly prompts the admin to re-login and does not silently fail.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-admin-login-ui-shows-a-clear-login-error-when-backend-login-fails-due-to-authorization-role-permission-issues-and-does-not-display-misleading-assign-user-roles-messaging-to-the-admin-user",
+      "title": "Ensure the admin login UI shows a clear login error when backend login fails due to authorization/role/permission issues, and does not display misleading \"assign user roles\" messaging to the admin user.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -271,6 +397,84 @@
       "id": "AR-19",
       "summary": "Add a loading indicator/loader during admin logout so the user sees the action is processing until completion (then redirect/update auth state).",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Update the portfolio’s direct contact email address to bajrangiyadav330@gmail.com wherever it is displayed/linked (e.g., Contact section, footer, social/email link).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Add resume uploading/management feature so the admin can upload/replace the resume file from the dashboard (and the public site Download Resume button serves the latest uploaded file).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Add developer avatar selection/management feature so the admin can upload/select the developer profile avatar shown on the public site (e.g., hero/about).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Implement backend support for an admin-managed resume file that can be uploaded/replaced from the Admin Dashboard and then downloaded by public users as the current resume.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Implement backend support for a developer avatar that can be set by an admin (upload/select) and displayed on the public site (e.g., About page avatar).",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Fix backend authorization for admin resume/avatar upload so it works with the current email/password admin session model (not AccessControl role checks that may not be set for the logged-in admin). Ensure `adminUploadResume` and `adminUploadAvatar` accept requests from a successfully authenticated admin and reject unauthenticated callers with a clear error.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Ensure resume and avatar files persist correctly in backend state and remain available after canister upgrades/redeployments (resume/avatar should not disappear after an update). Add/adjust upgrade-safe state handling as needed while respecting the single-actor architecture.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Add SEO to the public portfolio site (e.g., meta titles/descriptions, Open Graph/Twitter tags, sitemap.xml, robots.txt, canonical URLs, and basic structured data) to improve search visibility.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Fix backend authorization so that an authenticated admin (via the existing email/password admin session) can create, update, and delete Experience entries from the Admin Panel without getting an \"Unauthorized\" error.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Clarify/simplify admin authentication assuming there will be only a single admin user (no multi-user/roles needed); adjust admin login approach accordingly if desired.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Update backend admin authentication/authorization to assume a single admin user and authorize admin-only operations purely by the existing email/password admin session (no role assignment, no multi-user roles).",
+      "reqIds": [
+        "REQ-42"
+      ],
       "status": "pending"
     }
   ],

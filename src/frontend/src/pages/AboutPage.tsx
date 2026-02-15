@@ -1,8 +1,11 @@
-import { useGetAbout } from '../hooks/usePortfolioQueries';
+import { useGetAbout, useGetAvatar } from '../hooks/usePortfolioQueries';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AboutPage() {
   const { data: about, isLoading } = useGetAbout();
+  const { data: avatarFile } = useGetAvatar();
+
+  const avatarUrl = avatarFile?.blob ? avatarFile.blob.getDirectURL() : '/assets/generated/avatar.dim_512x512.png';
 
   return (
     <section className="py-16 md:py-24">
@@ -17,7 +20,7 @@ export default function AboutPage() {
             <div className="flex justify-center md:justify-start">
               <div className="relative h-64 w-64 overflow-hidden rounded-2xl border-4 border-primary/20 shadow-xl">
                 <img
-                  src="/assets/generated/avatar.dim_512x512.png"
+                  src={avatarUrl}
                   alt="Developer Avatar"
                   className="h-full w-full object-cover"
                 />

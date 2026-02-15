@@ -8,9 +8,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, ShieldCheck } from 'lucide-react';
 import type { AdminCredentials } from '../../backend';
 import { getIntendedAdminPath, clearIntendedAdminPath } from '../../utils/adminRedirect';
+import { normalizeAdminAuthError } from '../../utils/adminAuthErrors';
 
 export default function AdminEmailLoginForm() {
-  const { login, isLoading } = useAdminSession();
+  const { login, isLoginPending } = useAdminSession();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,7 +33,9 @@ export default function AdminEmailLoginForm() {
       if (response.__kind__ === 'invalidCredentials') {
         setError('Invalid email or password. Please try again.');
       } else if (response.__kind__ === 'failure') {
-        setError(`Login failed: ${response.failure}`);
+        // Sanitize backend error to remove confusing role/permission messaging
+        const friendlyError = normalizeAdminAuthError(response.failure);
+        setError(friendlyError);
       } else if (response.__kind__ === 'ok') {
         // Success - navigate to intended path
         const intendedPath = getIntendedAdminPath();
@@ -40,7 +43,10 @@ export default function AdminEmailLoginForm() {
         navigate({ to: intendedPath, replace: true });
       }
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred. Please try again.');
+      // Sanitize any thrown errors as well
+      const errorMessage = err.message || 'An unexpected error occurred';
+      const friendlyError = normalizeAdminAuthError(errorMessage);
+      setError(friendlyError);
     }
   };
 
@@ -64,7 +70,7 @@ export default function AdminEmailLoginForm() {
               placeholder="admin@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
+              disabled={isLoginPending}
               required
             />
           </div>
@@ -77,7 +83,7 @@ export default function AdminEmailLoginForm() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
+              disabled={isLoginPending}
               required
             />
           </div>
@@ -88,8 +94,8 @@ export default function AdminEmailLoginForm() {
             </Alert>
           )}
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
+          <Button type="submit" className="w-full" disabled={isLoginPending}>
+            {isLoginPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Logging in...

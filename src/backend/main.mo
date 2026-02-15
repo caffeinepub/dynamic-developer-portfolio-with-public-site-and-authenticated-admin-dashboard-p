@@ -4,32 +4,28 @@ import Time "mo:core/Time";
 import Array "mo:core/Array";
 import Nat "mo:core/Nat";
 import Runtime "mo:core/Runtime";
-
 import Principal "mo:core/Principal";
-import Option "mo:core/Option";
-
-import MixinAuthorization "authorization/MixinAuthorization";
 import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
+import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
-// Email/password-based admin authentication
-
+(with migration = Migration.run)
 actor {
-  // Components
-  include MixinStorage();
-
-  // Role-based admin authorization. Only perform check on admin functions.
+  // Components (authorization is needed for admin)
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
+  include MixinStorage();
 
-  // Portfolio types
+  // Types
   type Skill = {
     id : Nat;
     name : Text;
     category : Text;
     level : Text;
   };
+
   type Project = {
     id : Nat;
     title : Text;
@@ -39,6 +35,7 @@ actor {
     githubUrl : Text;
     image : { id : Text; url : Text };
   };
+
   type Experience = {
     id : Nat;
     title : Text;
@@ -48,14 +45,17 @@ actor {
     endDate : Text;
     description : Text;
   };
+
   type About = {
     content : Text;
   };
+
   type SocialLink = {
     id : Nat;
     platform : Text;
     url : Text;
   };
+
   type ContactMessage = {
     id : Nat;
     name : Text;
@@ -64,22 +64,26 @@ actor {
     createdAt : Time.Time;
     read : Bool;
   };
+
   public type UserProfile = {
     name : Text;
   };
 
-  // Email-password login support
+  // Admin authentication using email+password
   type AdminCredentials = {
     email : Text;
     password : Text;
   };
+
   type AdminSession = {
     email : Text;
     sessionToken : Text;
     createdAt : Time.Time;
     principal : Principal;
   };
+
   type AdminAuthResponse = { isAdmin : Bool };
+
   type CreateSessionResponse = {
     #ok : AdminSession;
     #invalidCredentials;
@@ -114,9 +118,34 @@ actor {
   // Session timeout: 24 hours in nanoseconds
   let SESSION_TIMEOUT_NS : Time.Time = 24 * 60 * 60 * 1_000_000_000;
 
-  // PUBLIC API methods
+  // === Resume and Avatar ===
 
-  // Authentication
+  type AdminFileType = {
+    #resume;
+    #avatar;
+  };
+
+  type AdminFile = {
+    fileType : AdminFileType;
+    blob : Storage.ExternalBlob;
+    name : Text;
+    uploadedAt : Time.Time;
+  };
+
+  type AdminFiles = {
+    resumeFile : ?AdminFile;
+    avatarFile : ?AdminFile;
+  };
+
+  var adminFiles : AdminFiles = {
+    resumeFile = null;
+    avatarFile = null;
+  };
+
+  // ========= PUBLIC API methods =========
+
+  // === Authentication ===
+
   public shared ({ caller }) func loginAsAdmin(credentials : AdminCredentials) : async AdminAuthResponse {
     let isValid = isValidAdminCredentialsInternal(credentials);
     { isAdmin = isValid };
@@ -140,7 +169,6 @@ actor {
   };
 
   public shared ({ caller }) func logoutAdmin() : async () {
-    // Only allow logout if caller owns the session
     switch (adminSession) {
       case (?session) {
         if (session.principal == caller) {
@@ -173,9 +201,48 @@ actor {
     };
   };
 
-  // Portfolio data
+  // === Resume and Avatar File Management ===
+
+  public shared ({ caller }) func adminUploadResume(blob : Storage.ExternalBlob, name : Text) : async () {
+    if (not isAdminSession(caller)) {
+      Runtime.trap("Unauthorized: Only admins can upload resume");
+    };
+    adminFiles := {
+      adminFiles with resumeFile = ?{
+        fileType = #resume;
+        blob;
+        name;
+        uploadedAt = Time.now();
+      };
+    };
+  };
+
+  public shared ({ caller }) func adminUploadAvatar(blob : Storage.ExternalBlob, name : Text) : async () {
+    if (not isAdminSession(caller)) {
+      Runtime.trap("Unauthorized: Only admins can upload avatar");
+    };
+    adminFiles := {
+      adminFiles with avatarFile = ?{
+        fileType = #avatar;
+        blob;
+        name;
+        uploadedAt = Time.now();
+      };
+    };
+  };
+
+  public query ({ caller }) func getResume() : async ?AdminFile {
+    adminFiles.resumeFile;
+  };
+
+  public query ({ caller }) func getAvatar() : async ?AdminFile {
+    adminFiles.avatarFile;
+  };
+
+  // ========= Portfolio data =========
+
   public shared ({ caller }) func initialize() : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can initialize seed data");
     };
 
@@ -208,29 +275,23 @@ actor {
 
   // User Profile functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can access profiles");
-    };
     userProfiles.get(caller);
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not (isAdminCallerWithActiveSession(caller))) {
+    if (caller != user and not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile");
     };
     userProfiles.get(user);
   };
 
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can save profiles");
-    };
     userProfiles.add(caller, profile);
   };
 
   // Skill functions (Admin only)
   public shared ({ caller }) func createSkill(skill : Skill) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can create skills");
     };
     let newSkill = { skill with id = nextSkillId };
@@ -239,7 +300,7 @@ actor {
   };
 
   public shared ({ caller }) func updateSkill(id : Nat, skill : Skill) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can update skills");
     };
     if (not skills.containsKey(id)) {
@@ -249,7 +310,7 @@ actor {
   };
 
   public shared ({ caller }) func deleteSkill(id : Nat) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can delete skills");
     };
     skills.remove(id);
@@ -257,7 +318,7 @@ actor {
 
   // Project functions (Admin only for CUD)
   public shared ({ caller }) func createProject(project : Project) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can create projects");
     };
     let newProject = { project with id = nextProjectId };
@@ -266,7 +327,7 @@ actor {
   };
 
   public shared ({ caller }) func updateProject(id : Nat, project : Project) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can update projects");
     };
     if (not projects.containsKey(id)) {
@@ -276,7 +337,7 @@ actor {
   };
 
   public shared ({ caller }) func deleteProject(id : Nat) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can delete projects");
     };
     projects.remove(id);
@@ -284,7 +345,7 @@ actor {
 
   // Experience functions (Admin only for CUD)
   public shared ({ caller }) func createExperience(experience : Experience) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can create experience entries");
     };
     let newExperience = { experience with id = nextExperienceId };
@@ -293,7 +354,7 @@ actor {
   };
 
   public shared ({ caller }) func updateExperience(id : Nat, experience : Experience) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can update experience entries");
     };
     if (not experiences.containsKey(id)) {
@@ -303,7 +364,7 @@ actor {
   };
 
   public shared ({ caller }) func deleteExperience(id : Nat) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can delete experience entries");
     };
     experiences.remove(id);
@@ -311,7 +372,7 @@ actor {
 
   // Social Links functions (Admin only for CUD)
   public shared ({ caller }) func createSocialLink(socialLink : SocialLink) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can create social links");
     };
     let newSocialLink = { socialLink with id = nextSocialLinkId };
@@ -320,7 +381,7 @@ actor {
   };
 
   public shared ({ caller }) func updateSocialLink(id : Nat, socialLink : SocialLink) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can update social links");
     };
     if (not socialLinks.containsKey(id)) {
@@ -330,21 +391,20 @@ actor {
   };
 
   public shared ({ caller }) func deleteSocialLink(id : Nat) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can delete social links");
     };
     socialLinks.remove(id);
   };
 
-  // About content (Admin only for update)
   public shared ({ caller }) func updateAbout(content : Text) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can update about content");
     };
     aboutContent := { content };
   };
 
-  // Contact Messages
+  // Public: Anyone can submit a contact message
   public shared ({ caller }) func submitContactMessage(name : Text, email : Text, message : Text) : async () {
     let newMessage = {
       id = nextMessageId;
@@ -358,15 +418,17 @@ actor {
     nextMessageId += 1;
   };
 
+  // Admin only: View all contact messages
   public shared ({ caller }) func getContactMessages() : async [ContactMessage] {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can view contact messages");
     };
     contactMessages.values().toArray();
   };
 
+  // Admin only: Mark message as read
   public shared ({ caller }) func markMessageAsRead(id : Nat) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can mark messages as read");
     };
     let updatedMessage = switch (contactMessages.get(id)) {
@@ -376,8 +438,9 @@ actor {
     contactMessages.add(id, updatedMessage);
   };
 
+  // Admin only: Delete contact message
   public shared ({ caller }) func deleteContactMessage(id : Nat) : async () {
-    if (not isAdminCallerWithActiveSession(caller)) {
+    if (not isAdminSession(caller)) {
       Runtime.trap("Unauthorized: Only admins can delete contact messages");
     };
     contactMessages.remove(id);
@@ -404,18 +467,6 @@ actor {
     socialLinks.values().toArray();
   };
 
-  // Private helpers
-  func isAdminCallerWithActiveSession(caller : Principal) : Bool {
-    switch (adminSession) {
-      case (?session) {
-        let isOwner = session.principal == caller;
-        let notExpired = (Time.now() - session.createdAt) < SESSION_TIMEOUT_NS;
-        isOwner and notExpired;
-      };
-      case (null) { false };
-    };
-  };
-
   func isValidAdminCredentialsInternal(credentials : AdminCredentials) : Bool {
     switch (adminCredentials) {
       case (?creds) {
@@ -424,4 +475,15 @@ actor {
       case (null) { false };
     };
   };
+
+  func isAdminSession(caller : Principal) : Bool {
+    switch (adminSession) {
+      case (?session) {
+        let notExpired = (Time.now() - session.createdAt) < SESSION_TIMEOUT_NS;
+        notExpired and session.principal == caller;
+      };
+      case (null) { false };
+    };
+  };
 };
+
