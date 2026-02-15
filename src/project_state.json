@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 27,
+  "projectStateVersion": 29,
   "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend, SEO optimization, and a secure admin dashboard to manage projects, skills, about content, contact messages, resume, and developer avatar without code changes, built with Laravel + MySQL and Vue.js (or Blade), deployment-ready for Linux/Nginx, with admin authentication using email/password login.",
   "architectural_notes": [
     "Tech stack: Laravel backend + MySQL database; frontend Vue.js or Blade with Bootstrap/Tailwind.",
@@ -286,6 +286,38 @@
         "REQ-43"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-new-public-page-at-route-create-createpage-that-showcases-the-developer-s-work-and-services-includes-strong-ctas-to-contact-hire-and-provides-clearly-labeled-advertisement-placement-blocks-suitable-for-monetization-without-integrating-any-third-party-ad-networks-scripts-all-user-facing-text-on-this-page-must-be-in-english",
+      "title": "Add a new public page at route `/create` (CreatePage) that showcases the developer’s work and services, includes strong CTAs to contact/hire, and provides clearly labeled advertisement placement blocks suitable for monetization (without integrating any third-party ad networks/scripts). All user-facing text on this page must be in English.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-create-page-to-the-public-navigation-so-users-can-easily-discover-it-on-desktop-and-mobile-menus",
+      "title": "Add the Create page to the public navigation so users can easily discover it on desktop and mobile menus.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-route-aware-seo-configuration-to-include-create-with-an-appropriate-title-description-and-og-image-entry-consistent-with-the-existing-seo-system",
+      "title": "Update the route-aware SEO configuration to include `/create` with an appropriate title, description, and OG image entry, consistent with the existing SEO system.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-create-route-to-the-static-sitemap-so-search-engines-can-discover-it",
+      "title": "Add the `/create` route to the static sitemap so search engines can discover it.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -476,8 +508,15 @@
         "REQ-42"
       ],
       "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Add a new \"Create\" page to showcase work, attract clients, and support running advertisements for online income.",
+      "reqIds": [],
+      "status": "pending"
     }
   ],
+  "gameProjectType": "none",
   "projectName": "Dynamic developer portfolio with public site and authenticated admin dashboard (projects/skills/about/contact)",
   "clarification_mode": "instant",
   "clarification_rounds": 0

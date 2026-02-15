@@ -1,68 +1,92 @@
 {
   "kind": "build_request",
-  "title": "Simplify admin auth to single-admin session (remove role/permission assignment errors)",
+  "title": "Add a new public Create page for showcasing work, attracting clients, and ad placements",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-42",
-      "text": "Update backend admin authentication/authorization to assume a single admin user and authorize admin-only operations purely by the existing email/password admin session (no role assignment, no multi-user roles).",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ],
-        "quotes": [
-          "why not login admin yek hi user hoga"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Calling `createAdminSession` with the correct credentials (`admin@gmail.com` / `Admin@92505`) succeeds and returns `#ok` without any authorization/role-assignment error.",
-        "The backend does not attempt to assign roles/permissions to principals during login (no role/permission assignment step is required for a single-admin setup).",
-        "All admin-only methods currently protected by `AccessControl.hasPermission(... #admin)` are instead protected by a single-admin-session check (active session for the caller, not expired).",
-        "When an unauthenticated or expired-session caller invokes an admin-only method, the backend traps with an Unauthorized error message (consistent, human-readable, and includes the word \"Unauthorized\")."
-      ]
-    },
-    {
-      "id": "REQ-43",
-      "text": "Ensure the admin login UI shows a clear login error when backend login fails due to authorization/role/permission issues, and does not display misleading \"assign user roles\" messaging to the admin user.",
+      "id": "REQ-44",
+      "text": "Add a new public page at route `/create` (CreatePage) that showcases the developer’s work and services, includes strong CTAs to contact/hire, and provides clearly labeled advertisement placement blocks suitable for monetization (without integrating any third-party ad networks/scripts). All user-facing text on this page must be in English.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-6"
         ],
         "quotes": [
-          "why not login admin yek hi user hoga"
+          "A Create page to showcase my work, attract clients, and run advertisements for online income."
         ]
       },
       "acceptanceCriteria": [
-        "If `createAdminSession` throws/traps for any reason, the Admin Login form displays a user-friendly error in the existing error alert area.",
-        "Successful login continues to redirect to the intended admin destination as currently implemented.",
-        "The login screen does not show backend errors referring to assigning roles/permissions (e.g., \"Only admins can assign user roles\") in normal operation with correct credentials."
+        "Navigating to `/create` renders a new Create page under the existing PublicLayout (navbar + footer).",
+        "The Create page includes: (1) a hero/intro section, (2) a “Featured Work” section that reuses existing projects data/cards or a subset of them, (3) a “Services”/“What I can do for you” section, (4) at least one primary CTA button linking to `/contact`, and (5) an “Advertisements” section containing responsive placeholder ad blocks (e.g., banner and square units) labeled as ad space.",
+        "No third-party ad scripts, SDKs, iframes, or network integrations are added; ad blocks are purely UI placeholders that could later be swapped with real ad code by a developer.",
+        "Page is responsive and matches the existing site visual theme and dark mode styling."
+      ]
+    },
+    {
+      "id": "REQ-45",
+      "text": "Add the Create page to the public navigation so users can easily discover it on desktop and mobile menus.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "A Create page to showcase my work, attract clients, and run advertisements for online income."
+        ]
+      },
+      "acceptanceCriteria": [
+        "PublicNavbar shows a new nav link labeled “Create” that routes to `/create` on both desktop and mobile menus.",
+        "The active-route styling works for `/create` the same way it does for other public links."
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "text": "Update the route-aware SEO configuration to include `/create` with an appropriate title, description, and OG image entry, consistent with the existing SEO system.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "A Create page to showcase my work, attract clients, and run advertisements for online income."
+        ]
+      },
+      "acceptanceCriteria": [
+        "`frontend/src/seo/routeSeo.ts` includes a `/create` entry with an English title and description appropriate for a client-attraction/portfolio showcase page.",
+        "Visiting `/create` updates the document title and meta tags via the existing SeoHeadManager behavior (no changes required to SeoHeadManager beyond adding the route mapping)."
+      ]
+    },
+    {
+      "id": "REQ-47",
+      "text": "Add the `/create` route to the static sitemap so search engines can discover it.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "A Create page to showcase my work, attract clients, and run advertisements for online income."
+        ]
+      },
+      "acceptanceCriteria": [
+        "`frontend/public/sitemap.xml` includes a `<url>` entry for `https://your-domain.com/create` with reasonable changefreq/priority values aligned with the existing sitemap style.",
+        "No admin routes are added to the sitemap."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain single-actor; all Motoko logic stays in `backend/main.mo`.",
-    "Do not edit any files under `frontend/src/components/ui` or the immutable hook/provider entry paths listed in SYSTEM_CONTEXT."
+    "Frontend must remain React + TypeScript + Tailwind + React Query + TanStack Router (as currently used).",
+    "Do not edit files under `frontend/src/components/ui` or other frontend immutable paths listed in SYSTEM_CONTEXT.",
+    "Do not introduce third-party ad network integrations, external scripts, or SDK-based advertising; only add UI placeholders/sections.",
+    "Backend must remain single-actor Motoko; no backend changes are required for this request."
   ],
   "nonGoals": [
-    "Adding support for multiple admins, roles, or user management UI.",
-    "Adding third-party authentication providers."
+    "Implementing real advertisement network integrations (Google AdSense, affiliate widgets, etc.).",
+    "Adding a new admin management UI/back-end APIs for ad inventory or ad placement configuration (unless explicitly requested later).",
+    "Changing existing Home/About/Projects/Skills/Experience/Contact content beyond what’s necessary to add navigation and routing for the new page."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [
-      "Use a single-admin (one user) model for admin authentication/authorization."
-    ],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

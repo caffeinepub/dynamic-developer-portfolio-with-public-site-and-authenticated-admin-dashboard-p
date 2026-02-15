@@ -16,6 +16,7 @@ export default function PublicNavbar() {
     { path: '/projects', label: 'Projects' },
     { path: '/experience', label: 'Experience' },
     { path: '/contact', label: 'Contact' },
+    { path: '/create', label: 'Create' },
   ];
 
   return (

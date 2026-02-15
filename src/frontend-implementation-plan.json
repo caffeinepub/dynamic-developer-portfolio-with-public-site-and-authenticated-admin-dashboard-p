@@ -1,31 +1,72 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Admin login: user-friendly errors and remove role/permission messaging",
+  "title": "Public /create page with portfolio showcase, CTAs, ad placeholders, SEO, and discovery",
   "requirements": [
     {
-      "id": "REQ-43",
-      "summary": "Improve Admin Login error handling to show clear, user-friendly messages on backend failures and suppress misleading role/permission assignment wording.",
+      "id": "REQ-44",
+      "summary": "Create a new public CreatePage at /create showcasing work, services, CTAs to contact, and ad placeholder blocks (English text only, no ad network integrations).",
       "acceptanceCriteria": [
-        "If `createAdminSession` throws/traps for any reason, the Admin Login form displays a user-friendly error in the existing error alert area.",
-        "Successful login continues to redirect to the intended admin destination as currently implemented.",
-        "The login screen does not show backend errors referring to assigning roles/permissions (e.g., \"Only admins can assign user roles\") in normal operation with correct credentials."
+        "Navigating to `/create` renders a new Create page under the existing PublicLayout (navbar + footer).",
+        "The Create page includes: (1) a hero/intro section, (2) a “Featured Work” section that reuses existing projects data/cards or a subset of them, (3) a “Services”/“What I can do for you” section, (4) at least one primary CTA button linking to `/contact`, and (5) an “Advertisements” section containing responsive placeholder ad blocks (e.g., banner and square units) labeled as ad space.",
+        "No third-party ad scripts, SDKs, iframes, or network integrations are added; ad blocks are purely UI placeholders that could later be swapped with real ad code by a developer.",
+        "Page is responsive and matches the existing site visual theme and dark mode styling."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/adminAuthErrors.ts",
+          "path": "frontend/src/pages/CreatePage.tsx",
           "operation": "create",
-          "description": "Add a small helper to normalize/sanitize admin-login errors into user-friendly messages (e.g., map Unauthorized/role/permission-assignment related backend text to a clear login failure message without referencing roles/permissions)."
+          "description": "Implement CreatePage UI under the public site theme using Tailwind: hero/intro section (English text), “Featured Work” section that reuses existing portfolio projects query (useGetProjects) and existing ProjectCard for a curated subset, a “Services / What I can do for you” section, a prominent primary CTA linking to `/contact`, and an “Advertisements” section with responsive, clearly labeled ad placeholder blocks (banner + square) as pure UI (no third-party scripts, SDKs, iframes, or ad network code)."
         },
         {
-          "path": "frontend/src/components/auth/AdminEmailLoginForm.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Use the new adminAuthErrors helper to (1) display friendly errors when the backend traps/throws and (2) sanitize `CreateSessionResponse.__kind__ === 'failure'` messages so they never surface role/permission-assignment wording in the alert area."
-        },
+          "description": "Wire CreatePage into the TanStack Router public route tree by importing the page component and adding a new public route at path `/create` under PublicLayout."
+        }
+      ]
+    },
+    {
+      "id": "REQ-45",
+      "summary": "Expose the Create page in the public navigation for desktop and mobile with correct active-route styling.",
+      "acceptanceCriteria": [
+        "PublicNavbar shows a new nav link labeled “Create” that routes to `/create` on both desktop and mobile menus.",
+        "The active-route styling works for `/create` the same way it does for other public links."
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/hooks/useAdminSession.ts",
+          "path": "frontend/src/components/layout/PublicNavbar.tsx",
           "operation": "modify",
-          "description": "Harden the login mutation error surface for the UI by ensuring thrown/trapped errors from `createAdminSession` are propagated as a standard `Error` message suitable for user-friendly handling (paired with the sanitizer in the login form)."
+          "description": "Add `{ path: '/create', label: 'Create' }` to the existing navLinks list so the link appears in both desktop and mobile menus, and ensure active-route styling applies when currentPath is `/create`."
+        }
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "summary": "Add route-aware SEO metadata for /create (title, description, OG image) using the existing SEO mapping system.",
+      "acceptanceCriteria": [
+        "`frontend/src/seo/routeSeo.ts` includes a `/create` entry with an English title and description appropriate for a client-attraction/portfolio showcase page.",
+        "Visiting `/create` updates the document title and meta tags via the existing SeoHeadManager behavior (no changes required to SeoHeadManager beyond adding the route mapping)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/seo/routeSeo.ts",
+          "operation": "modify",
+          "description": "Add a new `/create` entry to routeSeoMap with an English title/description aligned to a services + portfolio showcase page, and set ogImage to an existing generated asset already used by the site (e.g., the hero background image) to remain consistent with the current SEO system."
+        }
+      ]
+    },
+    {
+      "id": "REQ-47",
+      "summary": "Add /create to the static public sitemap for search discovery.",
+      "acceptanceCriteria": [
+        "`frontend/public/sitemap.xml` includes a `<url>` entry for `https://your-domain.com/create` with reasonable changefreq/priority values aligned with the existing sitemap style.",
+        "No admin routes are added to the sitemap."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/sitemap.xml",
+          "operation": "modify",
+          "description": "Insert a new `<url>` entry for `https://your-domain.com/create` with changefreq/priority values consistent with the existing public routes, ensuring only the public `/create` route is added (no admin URLs)."
         }
       ]
     }

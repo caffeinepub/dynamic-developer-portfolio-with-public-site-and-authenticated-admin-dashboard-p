@@ -36,6 +36,11 @@ export const routeSeoMap: Record<string, RouteSeoConfig> = {
     description: 'Get in touch with me for collaboration opportunities, project inquiries, or just to connect. I\'m always open to discussing new ideas and opportunities.',
     ogImage: '/assets/generated/hero-bg.dim_1920x1080.png',
   },
+  '/create': {
+    title: 'Hire Me - Professional Web Development Services',
+    description: 'Looking for a skilled developer? I offer professional web development, full stack solutions, and blockchain development services. Let\'s build something amazing together.',
+    ogImage: '/assets/generated/hero-bg.dim_1920x1080.png',
+  },
 };
 
 export function getSeoForRoute(pathname: string): RouteSeoConfig {

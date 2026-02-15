@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Simplify admin authentication/authorization to a single-admin session model and remove role/permission assignment errors during login and admin operations.
+**Goal:** Add a new public “Create” page to showcase work and services, drive client contact/hiring, and display clearly labeled advertisement placement placeholders.
 
 **Planned changes:**
-- Backend: Update admin auth to assume one admin user authenticated via the existing email/password session only, with no role/permission assignment step during login.
-- Backend: Replace current `AccessControl.hasPermission(... #admin)` protections on admin-only methods with a single-admin-session check (active, not expired), and trap with a consistent human-readable "Unauthorized" error for unauthenticated/expired callers.
-- Frontend: Ensure Admin Login displays a clear, user-friendly error when `createAdminSession` fails, and avoid showing misleading role/permission assignment messaging.
+- Add a new public route `/create` (CreatePage) under the existing PublicLayout with English-only page copy.
+- Build CreatePage sections: hero/intro, Featured Work (reusing existing project cards/data or a subset), Services/“What I can do for you”, a primary CTA linking to `/contact`, and an Advertisements section with responsive labeled placeholder ad blocks (e.g., banner and square units) with no third-party ad integrations.
+- Add a “Create” link to the public navigation (desktop + mobile) with correct active-route styling.
+- Update route-aware SEO mapping to include `/create` with an appropriate English title, description, and OG image entry.
+- Add `/create` to the static sitemap (`frontend/public/sitemap.xml`) using the existing sitemap style.
 
-**User-visible outcome:** Admin can log in using `admin@gmail.com` / `Admin@92505` without role/permission-related errors, is correctly redirected on success, and sees a clear login error on failure; admin-only actions are accessible only with a valid, unexpired admin session and otherwise return an "Unauthorized" error.
+**User-visible outcome:** Users can navigate to `/create` from the public navbar to view a new Create page featuring showcased work, services, a clear contact/hire CTA, and visible ad-space placeholders; the page is responsive, themed consistently (including dark mode), and discoverable via SEO and sitemap.

@@ -7,6 +7,7 @@ import SkillsPage from './pages/SkillsPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ExperiencePage from './pages/ExperiencePage';
 import ContactPage from './pages/ContactPage';
+import CreatePage from './pages/CreatePage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminProjectsPage from './pages/admin/AdminProjectsPage';
 import AdminSkillsPage from './pages/admin/AdminSkillsPage';
@@ -69,6 +70,12 @@ const contactRoute = createRoute({
   getParentRoute: () => publicLayoutRoute,
   path: '/contact',
   component: ContactPage,
+});
+
+const createPageRoute = createRoute({
+  getParentRoute: () => publicLayoutRoute,
+  path: '/create',
+  component: CreatePage,
 });
 
 const adminLayoutRoute = createRoute({
@@ -139,6 +146,7 @@ const routeTree = rootRoute.addChildren([
     projectsRoute,
     experienceRoute,
     contactRoute,
+    createPageRoute,
   ]),
   adminLayoutRoute.addChildren([
     adminDashboardRoute,

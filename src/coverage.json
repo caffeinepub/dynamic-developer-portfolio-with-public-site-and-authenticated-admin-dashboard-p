@@ -1,49 +1,73 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T12:56:23.670Z",
+  "generatedAt": "2026-02-15T13:50:40.467Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 1,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
-        "id": "REQ-42",
-        "summary": "Update backend admin authentication/authorization to assume a single admin user and authorize admin-only operations purely by the existing email/password admin session (no role assignment, no multi-user roles).",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-43",
-        "summary": "Ensure the admin login UI shows a clear login error when backend login fails due to authorization/role/permission issues, and does not display misleading \"assign user roles\" messaging to the admin user.",
+        "id": "REQ-44",
+        "summary": "Add a new public page at route `/create` (CreatePage) that showcases the developer’s work and services, includes strong CTAs to contact/hire, and provides clearly labeled advertisement placement blocks suitable for monetization (without integrating any third-party ad networks/scripts). All user-facing text on this page must be in English.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/utils/adminAuthErrors.ts",
-          "frontend/src/components/auth/AdminEmailLoginForm.tsx",
-          "frontend/src/hooks/useAdminSession.ts"
+          "frontend/src/pages/CreatePage.tsx",
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/utils/adminAuthErrors.ts",
-          "frontend/src/components/auth/AdminEmailLoginForm.tsx",
-          "frontend/src/hooks/useAdminSession.ts"
+          "frontend/src/pages/CreatePage.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-45",
+        "summary": "Add the Create page to the public navigation so users can easily discover it on desktop and mobile menus.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/layout/PublicNavbar.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/layout/PublicNavbar.tsx"
+        ]
+      },
+      {
+        "id": "REQ-46",
+        "summary": "Update the route-aware SEO configuration to include `/create` with an appropriate title, description, and OG image entry, consistent with the existing SEO system.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/seo/routeSeo.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/seo/routeSeo.ts"
+        ]
+      },
+      {
+        "id": "REQ-47",
+        "summary": "Add the `/create` route to the static sitemap so search engines can discover it.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/public/sitemap.xml"
+        ],
+        "matchedFiles": [
+          "frontend/public/sitemap.xml"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/auth/AdminEmailLoginForm.tsx",
-    "frontend/src/hooks/useAdminSession.ts",
-    "frontend/src/utils/adminAuthErrors.ts",
+    "frontend/public/sitemap.xml",
+    "frontend/src/App.tsx",
+    "frontend/src/components/layout/PublicNavbar.tsx",
+    "frontend/src/pages/CreatePage.tsx",
+    "frontend/src/seo/routeSeo.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
