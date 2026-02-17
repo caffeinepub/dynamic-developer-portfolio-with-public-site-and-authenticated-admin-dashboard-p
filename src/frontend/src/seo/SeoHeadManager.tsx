@@ -7,6 +7,7 @@ export default function SeoHeadManager() {
   const routerState = useRouterState();
   const pathname = routerState.location.pathname;
   const isAdminRoute = pathname.startsWith('/admin');
+  const isUtilityRoute = pathname === '/scan' || pathname === '/qr';
 
   useEffect(() => {
     const origin = window.location.origin;
@@ -71,8 +72,8 @@ export default function SeoHeadManager() {
       }
     };
 
-    if (isAdminRoute) {
-      // Admin routes: noindex, nofollow
+    if (isAdminRoute || isUtilityRoute) {
+      // Admin routes and utility routes: noindex, nofollow
       setMetaTag('meta[name="robots"]', 'content', 'noindex, nofollow');
       
       // Remove public SEO tags
@@ -126,7 +127,7 @@ export default function SeoHeadManager() {
       });
       setJsonLd(structuredData);
     }
-  }, [pathname, isAdminRoute]);
+  }, [pathname, isAdminRoute, isUtilityRoute]);
 
   return null;
 }

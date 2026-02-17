@@ -2,11 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-new-public-page-at-route-create-createpage-that-showcases-the-developer-s-work-and-services-includes-strong-ctas-to-contact-hire-and-provides-clearly-labeled-advertisement-placement-blocks-suitable-for-monetization-without-integrating-any-third-party-ad-networks-scripts-all-user-facing-text-on-this-page-must-be-in-english",
-      "featureTitle": "Add a new public page at route `/create` (CreatePage) that showcases the developer’s work and services, includes strong CTAs to contact/hire, and provides clearly labeled advertisement placement blocks suitable for monetization (without integrating any third-party ad networks/scripts). All user-facing text on this page must be in English.",
+      "featureId": "feature-add-a-new-public-route-scan-that-immediately-redirects-the-user-to-https-dynamic-developer-portfolio-with-public-site-and-a-w6e-caffeine-xyz-after-the-page-loads-and-show-a-simple-on-screen-message-while-the-redirect-is-happening-english-only",
+      "featureTitle": "Add a new public route `/scan` that immediately redirects the user to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` after the page loads, and show a simple on-screen message while the redirect is happening (English only).",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/pages/CreatePage.tsx"
+        "frontend/src/pages/ScanPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,15 +18,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-44"
+        "REQ-48"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-the-create-page-to-the-public-navigation-so-users-can-easily-discover-it-on-desktop-and-mobile-menus",
-      "featureTitle": "Add the Create page to the public navigation so users can easily discover it on desktop and mobile menus.",
+      "featureId": "feature-add-a-new-public-route-qr-that-displays-a-qr-code-image-that-encodes-https-dynamic-developer-portfolio-with-public-site-and-a-w6e-caffeine-xyz-and-includes-a-short-english-instruction-text-e-g-scan-to-open-my-portfolio",
+      "featureTitle": "Add a new public route `/qr` that displays a QR code image that encodes `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` and includes a short English instruction text (e.g., \"Scan to open my portfolio\").",
       "files": [
-        "frontend/src/components/layout/PublicNavbar.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/pages/QrPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -38,14 +39,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-45"
+        "REQ-49"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-route-aware-seo-configuration-to-include-create-with-an-appropriate-title-description-and-og-image-entry-consistent-with-the-existing-seo-system",
-      "featureTitle": "Update the route-aware SEO configuration to include `/create` with an appropriate title, description, and OG image entry, consistent with the existing SEO system.",
+      "featureId": "feature-ensure-utility-routes-scan-and-qr-are-marked-as-noindex-nofollow-via-the-existing-route-aware-seo-head-manager-behavior-so-search-engines-do-not-index-these-utility-pages",
+      "featureTitle": "Ensure utility routes `/scan` and `/qr` are marked as `noindex, nofollow` via the existing route-aware SEO head manager behavior, so search engines do not index these utility pages.",
       "files": [
+        "frontend/src/seo/SeoHeadManager.tsx",
         "frontend/src/seo/routeSeo.ts"
       ],
       "components": [
@@ -58,27 +60,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-46"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-the-create-route-to-the-static-sitemap-so-search-engines-can-discover-it",
-      "featureTitle": "Add the `/create` route to the static sitemap so search engines can discover it.",
-      "files": [
-        "frontend/public/sitemap.xml"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-47"
+        "REQ-50"
       ],
       "confidence": "high"
     }

@@ -1,5 +1,5 @@
 {
-  "frontend/src/App.tsx": "Main application component with TanStack Router configuration for all public and admin routes including the new /create route (renamed to createPageRoute to avoid naming conflict) under PublicLayout.",
+  "frontend/src/App.tsx": "Main application component with TanStack Router configuration for all public and admin routes including the new /scan and /qr utility routes under PublicLayout.",
   "frontend/src/hooks/usePortfolioQueries.ts": "React Query hooks for fetching public portfolio data with unwrapOption utility applied to resume and avatar queries to normalize optional backend responses.",
   "frontend/src/hooks/useAdminQueries.ts": "React Query hooks for admin-specific queries (contact messages and user profile) with removed isCallerAdmin query as it's no longer needed for email/password auth.",
   "frontend/src/hooks/useAdminMutations.ts": "React Query mutation hooks for all admin CRUD operations including resume and avatar upload with progress tracking using ExternalBlob, enhanced with centralized unauthorized error detection that clears the admin session and prompts re-login via toast notification.",
@@ -36,12 +36,14 @@
   "frontend/src/pages/admin/AdminResumePage.tsx": "Admin page for uploading and managing resume files with PDF validation, upload progress tracking, and current resume display with safe property access.",
   "frontend/src/pages/admin/AdminAvatarPage.tsx": "Admin page for uploading and managing avatar images with PNG/JPEG validation, image preview, upload progress tracking, and safe current avatar display using ExternalBlob.getDirectURL().",
   "frontend/src/utils/motokoOption.ts": "Utility function to normalize Motoko optional values from Candid, handling both Option shapes and already-normalized values, returning T | null consistently.",
-  "frontend/src/seo/routeSeo.ts": "Centralized route-to-SEO mapping defining page-specific titles, descriptions, and Open Graph images for all public portfolio routes including the new /create page.",
+  "frontend/src/seo/routeSeo.ts": "Centralized route-to-SEO mapping defining page-specific titles, descriptions, and Open Graph images for all public portfolio routes including the new /scan and /qr utility pages.",
   "frontend/src/seo/structuredData.ts": "JSON-LD structured data generators for WebSite and Person schema types with combined graph output for SEO.",
-  "frontend/src/seo/SeoHeadManager.tsx": "Route-aware SEO component that dynamically updates document title, meta tags, canonical links, Open Graph/Twitter cards, and JSON-LD based on current route; applies noindex to admin routes.",
+  "frontend/src/seo/SeoHeadManager.tsx": "Route-aware SEO component that dynamically updates document title, meta tags, canonical links, Open Graph/Twitter cards, and JSON-LD based on current route; applies noindex to admin routes and utility routes (/scan, /qr).",
   "frontend/index.html": "HTML entry point with baseline SEO defaults including meta description, Open Graph tags, and Twitter Card tags that serve as fallbacks for route-specific SEO.",
   "frontend/public/robots.txt": "Robots.txt file allowing all crawlers on public routes while disallowing /admin paths and referencing sitemap location.",
   "frontend/public/sitemap.xml": "Static XML sitemap listing all public portfolio routes including the new /create page with appropriate change frequencies and priorities, excluding admin paths.",
   "frontend/src/utils/adminAuthErrors.ts": "Utility function that normalizes backend admin authentication errors into user-friendly messages, sanitizing confusing role/permission-related error text.",
-  "frontend/src/pages/CreatePage.tsx": "Public showcase page with hero section using inline styles for grid background pattern, services overview, featured work grid reusing ProjectCard components, multiple CTAs to contact page, and responsive advertisement placeholder blocks (banner and square units) with no third-party integrations."
+  "frontend/src/pages/CreatePage.tsx": "Public showcase page with hero section using inline styles for grid background pattern, services overview, featured work grid reusing ProjectCard components, multiple CTAs to contact page, and responsive advertisement placeholder blocks (banner and square units) with no third-party integrations.",
+  "frontend/src/pages/ScanPage.tsx": "Public utility page that immediately redirects users to the portfolio homepage using window.location.replace, displaying a loading message during the brief transition.",
+  "frontend/src/pages/QrPage.tsx": "Public utility page displaying a static QR code image that encodes the portfolio URL, with responsive layout, clear instructions, and readable destination URL text."
 }

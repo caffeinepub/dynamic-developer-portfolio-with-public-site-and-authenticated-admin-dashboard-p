@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 29,
+  "projectStateVersion": 31,
   "summary": "Dynamic full-stack developer portfolio website with a public responsive frontend, SEO optimization, and a secure admin dashboard to manage projects, skills, about content, contact messages, resume, and developer avatar without code changes, built with Laravel + MySQL and Vue.js (or Blade), deployment-ready for Linux/Nginx, with admin authentication using email/password login.",
   "architectural_notes": [
     "Tech stack: Laravel backend + MySQL database; frontend Vue.js or Blade with Bootstrap/Tailwind.",
@@ -22,6 +22,7 @@
     "Developer avatar upload/selection/display feature is not working as expected."
   ],
   "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Black-and-white QR code encoding https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/ (qr-portfolio.dim_512x512.png)",
   "existing_features": [
     {
       "id": "feature-implement-a-responsive-public-portfolio-website-with-sections-pages-home-hero-ctas-about-skills-projects-card-grid-experience-timeline-and-contact-form-social-links-using-the-exact-user-provided-english-copy-for-the-hero-and-about-sections",
@@ -318,6 +319,30 @@
         "REQ-47"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-new-public-route-scan-that-immediately-redirects-the-user-to-https-dynamic-developer-portfolio-with-public-site-and-a-w6e-caffeine-xyz-after-the-page-loads-and-show-a-simple-on-screen-message-while-the-redirect-is-happening-english-only",
+      "title": "Add a new public route `/scan` that immediately redirects the user to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` after the page loads, and show a simple on-screen message while the redirect is happening (English only).",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-public-route-qr-that-displays-a-qr-code-image-that-encodes-https-dynamic-developer-portfolio-with-public-site-and-a-w6e-caffeine-xyz-and-includes-a-short-english-instruction-text-e-g-scan-to-open-my-portfolio",
+      "title": "Add a new public route `/qr` that displays a QR code image that encodes `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` and includes a short English instruction text (e.g., \"Scan to open my portfolio\").",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-utility-routes-scan-and-qr-are-marked-as-noindex-nofollow-via-the-existing-route-aware-seo-head-manager-behavior-so-search-engines-do-not-index-these-utility-pages",
+      "title": "Ensure utility routes `/scan` and `/qr` are marked as `noindex, nofollow` via the existing route-aware SEO head manager behavior, so search engines do not index these utility pages.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -512,6 +537,12 @@
     {
       "id": "AR-34",
       "summary": "Add a new \"Create\" page to showcase work, attract clients, and support running advertisements for online income.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Add a QR/scanner system so that when users scan a code (e.g., QR code) they are redirected to the portfolio website URL.",
       "reqIds": [],
       "status": "pending"
     }

@@ -8,6 +8,8 @@ import ProjectsPage from './pages/ProjectsPage';
 import ExperiencePage from './pages/ExperiencePage';
 import ContactPage from './pages/ContactPage';
 import CreatePage from './pages/CreatePage';
+import ScanPage from './pages/ScanPage';
+import QrPage from './pages/QrPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminProjectsPage from './pages/admin/AdminProjectsPage';
 import AdminSkillsPage from './pages/admin/AdminSkillsPage';
@@ -76,6 +78,18 @@ const createPageRoute = createRoute({
   getParentRoute: () => publicLayoutRoute,
   path: '/create',
   component: CreatePage,
+});
+
+const scanRoute = createRoute({
+  getParentRoute: () => publicLayoutRoute,
+  path: '/scan',
+  component: ScanPage,
+});
+
+const qrRoute = createRoute({
+  getParentRoute: () => publicLayoutRoute,
+  path: '/qr',
+  component: QrPage,
 });
 
 const adminLayoutRoute = createRoute({
@@ -147,6 +161,8 @@ const routeTree = rootRoute.addChildren([
     experienceRoute,
     contactRoute,
     createPageRoute,
+    scanRoute,
+    qrRoute,
   ]),
   adminLayoutRoute.addChildren([
     adminDashboardRoute,

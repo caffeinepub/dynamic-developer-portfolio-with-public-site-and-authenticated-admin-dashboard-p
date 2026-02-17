@@ -41,6 +41,16 @@ export const routeSeoMap: Record<string, RouteSeoConfig> = {
     description: 'Looking for a skilled developer? I offer professional web development, full stack solutions, and blockchain development services. Let\'s build something amazing together.',
     ogImage: '/assets/generated/hero-bg.dim_1920x1080.png',
   },
+  '/scan': {
+    title: 'Redirecting - Bajrangi Yadav Portfolio',
+    description: 'Redirecting you to the portfolio homepage.',
+    ogImage: '/assets/generated/hero-bg.dim_1920x1080.png',
+  },
+  '/qr': {
+    title: 'QR Code - Bajrangi Yadav Portfolio',
+    description: 'Scan this QR code to visit my portfolio on your mobile device.',
+    ogImage: '/assets/generated/qr-portfolio.dim_512x512.png',
+  },
 };
 
 export function getSeoForRoute(pathname: string): RouteSeoConfig {

@@ -1,92 +1,90 @@
 {
   "kind": "build_request",
-  "title": "Add a new public Create page for showcasing work, attracting clients, and ad placements",
+  "title": "Add QR scan redirect system to send users to the portfolio URL",
+  "projectName": "Dynamic Portfolio",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-44",
-      "text": "Add a new public page at route `/create` (CreatePage) that showcases the developer’s work and services, includes strong CTAs to contact/hire, and provides clearly labeled advertisement placement blocks suitable for monetization (without integrating any third-party ad networks/scripts). All user-facing text on this page must be in English.",
+      "id": "REQ-48",
+      "text": "Add a new public route `/scan` that immediately redirects the user to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` after the page loads, and show a simple on-screen message while the redirect is happening (English only).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-1"
         ],
         "quotes": [
-          "A Create page to showcase my work, attract clients, and run advertisements for online income."
+          "I need a scanner system that redirects users to my portfolio after scanning"
         ]
       },
       "acceptanceCriteria": [
-        "Navigating to `/create` renders a new Create page under the existing PublicLayout (navbar + footer).",
-        "The Create page includes: (1) a hero/intro section, (2) a “Featured Work” section that reuses existing projects data/cards or a subset of them, (3) a “Services”/“What I can do for you” section, (4) at least one primary CTA button linking to `/contact`, and (5) an “Advertisements” section containing responsive placeholder ad blocks (e.g., banner and square units) labeled as ad space.",
-        "No third-party ad scripts, SDKs, iframes, or network integrations are added; ad blocks are purely UI placeholders that could later be swapped with real ad code by a developer.",
-        "Page is responsive and matches the existing site visual theme and dark mode styling."
+        "Visiting `/scan` triggers a client-side redirect to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` without requiring any user interaction.",
+        "While redirecting, the page renders an English message such as \"Redirecting to portfolio…\" so users are not staring at a blank screen.",
+        "The redirect does not create an infinite loop and does not redirect back to `/scan`."
       ]
     },
     {
-      "id": "REQ-45",
-      "text": "Add the Create page to the public navigation so users can easily discover it on desktop and mobile menus.",
+      "id": "REQ-49",
+      "text": "Add a new public route `/qr` that displays a QR code image that encodes `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` and includes a short English instruction text (e.g., \"Scan to open my portfolio\").",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-1"
         ],
         "quotes": [
-          "A Create page to showcase my work, attract clients, and run advertisements for online income."
+          "I need a scanner system that redirects users to my portfolio after scanning"
         ]
       },
       "acceptanceCriteria": [
-        "PublicNavbar shows a new nav link labeled “Create” that routes to `/create` on both desktop and mobile menus.",
-        "The active-route styling works for `/create` the same way it does for other public links."
+        "Visiting `/qr` shows a QR code image that, when scanned by a phone camera, opens `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/`.",
+        "The QR page includes clear English instructions and displays the destination URL as readable text.",
+        "The QR code image is served as a static asset from `frontend/public/assets/generated/` (not generated dynamically via backend calls).",
+        "The `/qr` page is responsive and looks acceptable on mobile and desktop."
       ]
     },
     {
-      "id": "REQ-46",
-      "text": "Update the route-aware SEO configuration to include `/create` with an appropriate title, description, and OG image entry, consistent with the existing SEO system.",
+      "id": "REQ-50",
+      "text": "Ensure utility routes `/scan` and `/qr` are marked as `noindex, nofollow` via the existing route-aware SEO head manager behavior, so search engines do not index these utility pages.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-1"
         ],
         "quotes": [
-          "A Create page to showcase my work, attract clients, and run advertisements for online income."
+          "I need a scanner system that redirects users to my portfolio after scanning"
         ]
       },
       "acceptanceCriteria": [
-        "`frontend/src/seo/routeSeo.ts` includes a `/create` entry with an English title and description appropriate for a client-attraction/portfolio showcase page.",
-        "Visiting `/create` updates the document title and meta tags via the existing SeoHeadManager behavior (no changes required to SeoHeadManager beyond adding the route mapping)."
-      ]
-    },
-    {
-      "id": "REQ-47",
-      "text": "Add the `/create` route to the static sitemap so search engines can discover it.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ],
-        "quotes": [
-          "A Create page to showcase my work, attract clients, and run advertisements for online income."
-        ]
-      },
-      "acceptanceCriteria": [
-        "`frontend/public/sitemap.xml` includes a `<url>` entry for `https://your-domain.com/create` with reasonable changefreq/priority values aligned with the existing sitemap style.",
-        "No admin routes are added to the sitemap."
+        "When visiting `/scan` and `/qr`, the page includes `meta[name=\"robots\"]` set to `noindex, nofollow`.",
+        "Public SEO behavior for existing portfolio pages remains unchanged.",
+        "Admin route SEO behavior remains unchanged."
       ]
     }
   ],
   "constraints": [
-    "Frontend must remain React + TypeScript + Tailwind + React Query + TanStack Router (as currently used).",
-    "Do not edit files under `frontend/src/components/ui` or other frontend immutable paths listed in SYSTEM_CONTEXT.",
-    "Do not introduce third-party ad network integrations, external scripts, or SDK-based advertising; only add UI placeholders/sections.",
-    "Backend must remain single-actor Motoko; no backend changes are required for this request."
+    "Frontend must not modify any paths listed in `SYSTEM_CONTEXT.frontend.immutablePaths` (compose existing UI components instead).",
+    "Backend must remain a single Motoko actor in `backend/main.mo`; do not introduce additional backend services.",
+    "Do not integrate any third-party ad network scripts, trackers, or external QR-code generation APIs."
   ],
   "nonGoals": [
-    "Implementing real advertisement network integrations (Google AdSense, affiliate widgets, etc.).",
-    "Adding a new admin management UI/back-end APIs for ad inventory or ad placement configuration (unless explicitly requested later).",
-    "Changing existing Home/About/Projects/Skills/Experience/Contact content beyond what’s necessary to add navigation and routing for the new page."
+    "Building a native mobile scanner app.",
+    "Implementing camera access or an in-browser QR scanner (the requirement is redirect after scanning an external QR code).",
+    "Changing the portfolio content/pages beyond adding the new `/scan` and `/qr` utility routes.",
+    "Adding `/scan` or `/qr` to `sitemap.xml` (they are utility pages and should not be indexed)."
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Black-and-white QR code encoding https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/ (qr-portfolio.dim_512x512.png)"
+    ],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

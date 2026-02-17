@@ -1,13 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Add a new public “Create” page to showcase work and services, drive client contact/hiring, and display clearly labeled advertisement placement placeholders.
+**Goal:** Add simple utility pages for QR sharing and scanning that route users to the public portfolio URL.
 
 **Planned changes:**
-- Add a new public route `/create` (CreatePage) under the existing PublicLayout with English-only page copy.
-- Build CreatePage sections: hero/intro, Featured Work (reusing existing project cards/data or a subset), Services/“What I can do for you”, a primary CTA linking to `/contact`, and an Advertisements section with responsive labeled placeholder ad blocks (e.g., banner and square units) with no third-party ad integrations.
-- Add a “Create” link to the public navigation (desktop + mobile) with correct active-route styling.
-- Update route-aware SEO mapping to include `/create` with an appropriate English title, description, and OG image entry.
-- Add `/create` to the static sitemap (`frontend/public/sitemap.xml`) using the existing sitemap style.
+- Add a new public route `/scan` that shows a brief English “redirecting” message and immediately performs a client-side redirect to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/`.
+- Add a new public route `/qr` that displays a static QR code image encoding `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/`, along with short English instructions and the readable destination URL.
+- Ensure `/scan` and `/qr` set `meta[name="robots"]` to `noindex, nofollow` via the existing route-aware SEO head behavior.
 
-**User-visible outcome:** Users can navigate to `/create` from the public navbar to view a new Create page featuring showcased work, services, a clear contact/hire CTA, and visible ad-space placeholders; the page is responsive, themed consistently (including dark mode), and discoverable via SEO and sitemap.
+**User-visible outcome:** Users can visit `/qr` to scan a QR code to open the portfolio, and visiting `/scan` will automatically redirect them to the portfolio while showing a short “Redirecting to portfolio…” message.

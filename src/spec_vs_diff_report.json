@@ -1,71 +1,26 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T13:50:40.462Z",
-  "summary": "The diff adds a new /create route and navigation link, updates route-aware SEO for /create, and adds /create to the static sitemap. A new CreatePage component is added with a hero section and services section plus a primary CTA to /contact. However, the diff summary is truncated for CreatePage, so required “Featured Work” and “Advertisements” sections cannot be fully verified from the provided evidence. Several other unrelated frontend changes are indicated by the file summary list but were not requested.",
+  "generatedAt": "2026-02-17T05:12:28.065Z",
+  "summary": "Implemented new public utility routes /scan and /qr, updated router config to register them, and updated route-aware SEO logic to apply noindex/nofollow on these utility routes. However, the required static QR image asset addition is not evidenced in the diff summary.",
   "missing_requirements": [
     {
-      "id": "REQ-44",
-      "requirement": "Create page includes a “Featured Work” section that reuses existing projects data/cards or a subset of them.",
-      "reason": "CreatePage imports useGetProjects and ProjectCard and slices projects, but the diff is truncated before showing any rendered “Featured Work” section using ProjectCard; cannot confirm it is implemented.",
+      "id": "REQ-49",
+      "requirement": "Serve the QR code image as a static asset from `frontend/public/assets/generated/` (qr-portfolio.dim_512x512.png).",
+      "reason": "The /qr page references `/assets/generated/qr-portfolio.dim_512x512.png`, but the diff summary does not show that the image file was added under `frontend/public/assets/generated/` (only TSX files were added).",
       "evidence": [
-        "frontend/src/pages/CreatePage.tsx (truncated)"
-      ]
-    },
-    {
-      "id": "REQ-44",
-      "requirement": "Create page includes an “Advertisements” section containing responsive placeholder ad blocks (e.g., banner and square units) labeled as ad space.",
-      "reason": "No advertisement section or labeled ad placeholder blocks are visible in the truncated CreatePage content; cannot verify presence without the missing portion.",
-      "evidence": [
-        "frontend/src/pages/CreatePage.tsx (truncated)"
-      ]
-    },
-    {
-      "id": "REQ-44",
-      "requirement": "Create page is responsive and matches the existing site visual theme and dark mode styling.",
-      "reason": "Some responsive classes are shown (e.g., sm/md), but the overall page and ad blocks/theme parity cannot be confirmed due to truncation and missing sections.",
-      "evidence": [
-        "frontend/src/pages/CreatePage.tsx (truncated)"
+        "frontend/src/pages/QrPage.tsx"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "Changes to portfolio/admin React Query hooks (e.g., unwrapOption normalization, removal of isCallerAdmin query, new unauthorized error handling clearing admin session and showing toast).",
-      "reason": "Not requested; BuildRequest explicitly says no backend changes are required and only asks for the new public Create page, nav, SEO mapping, and sitemap update.",
-      "evidence": [
-        "frontend-file-summaries.txt (truncated)"
-      ]
-    },
-    {
-      "description": "Hook behavior change: automatically calling backend initialize() once per session when user is admin (seeding).",
-      "reason": "Not requested and goes beyond adding a new public /create page and related SEO/nav/sitemap updates.",
-      "evidence": [
-        "frontend-file-summaries.txt (truncated)"
-      ]
-    },
-    {
-      "description": "Footer changes (caffeine.ai attribution with UTM tracking) and Contact page content change (direct email now showing a specific email).",
-      "reason": "BuildRequest non-goal says not to change existing pages beyond what’s necessary for navigation/routing; these appear unrelated to adding /create.",
-      "evidence": [
-        "frontend-file-summaries.txt (truncated)"
-      ]
-    },
-    {
-      "description": "project_state.json summary content indicating a different tech stack (Laravel + MySQL + Vue/Blade, email/password auth).",
-      "reason": "Not part of the requested /create page work and conflicts with the stated frontend/backend constraints in the BuildRequest.",
-      "evidence": [
-        "project_state.json (truncated)"
-      ]
-    }
-  ],
-  "confidence": 0.62,
+  "hallucinated_features": [],
+  "confidence": 0.72,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/public/sitemap.xml",
     "frontend/src/App.tsx",
-    "frontend/src/components/layout/PublicNavbar.tsx",
-    "frontend/src/pages/CreatePage.tsx",
+    "frontend/src/pages/QrPage.tsx",
+    "frontend/src/pages/ScanPage.tsx",
+    "frontend/src/seo/SeoHeadManager.tsx",
     "frontend/src/seo/routeSeo.ts",
     "project_state.json"
   ]
