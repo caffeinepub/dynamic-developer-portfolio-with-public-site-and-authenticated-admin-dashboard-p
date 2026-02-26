@@ -1,0 +1,50 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Replace QR code implementation on /qr page with qr-code-styling-based component",
+  "requirements": [
+    {
+      "id": "REQ-69",
+      "summary": "Create a self-contained QRCode React component using qr-code-styling library with customizable size and styling options",
+      "acceptanceCriteria": [
+        "The component is importable as `import { QRCode } from '@/components/shared-assets/qr-code'`.",
+        "Passing `size=\"lg\"` renders a QR code of approximately 384px.",
+        "Passing `dotsOptions={{ color: '#53389e' }}` renders dots in that color.",
+        "Passing `cornersSquareOptions` and `cornersDotOptions` with a color applies those colors to the corner squares and corner dots respectively.",
+        "Passing `image` and `imageOptions` embeds the logo image at the specified size and margin.",
+        "The QR code re-renders correctly when `value` or `options` props change.",
+        "The component does not throw or produce a blank output when `options` is omitted."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/shared-assets/QRCode.tsx",
+          "operation": "create",
+          "description": "Create a React component that wraps qr-code-styling library. Accept props: value (string), size ('sm' | 'md' | 'lg' mapping to 160/256/384px), and options (optional object supporting image, imageOptions, dotsOptions, cornersSquareOptions, cornersDotOptions). Use useEffect to instantiate QRCodeStyling, append it to a container div ref, and update when props change. Clean up on unmount. Return a div container with appropriate dimensions based on size prop."
+        },
+        {
+          "path": "frontend/src/components/shared-assets/qr-code.ts",
+          "operation": "create",
+          "description": "Create a barrel export file that re-exports the QRCode component to enable the import path '@/components/shared-assets/qr-code'."
+        }
+      ]
+    },
+    {
+      "id": "REQ-70",
+      "summary": "Replace static QR code image on /qr page with the new QRCode component using styled options",
+      "acceptanceCriteria": [
+        "The `/qr` page renders the QR code using the new `<QRCode>` component, not a static `<img>` tag pointing to the PNG file.",
+        "The QR code encodes `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` exactly.",
+        "The page still displays the portfolio URL as a clickable anchor link as a fallback.",
+        "The page retains its existing noindex/nofollow SEO head behavior.",
+        "The rendered QR code is visually styled (colored dots/corners) and not plain black-and-white default styling."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/QrPage.tsx",
+          "operation": "modify",
+          "description": "Replace the static <img> element currently displaying the QR code PNG with the new <QRCode> component imported from '@/components/shared-assets/qr-code'. Set value prop to 'https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/', size prop to 'lg', and pass styled options with dotsOptions, cornersSquareOptions, and cornersDotOptions using colors from the portfolio's theme (e.g., accent purple '#53389e'). Retain all existing instructional text, the fallback anchor link, and the page structure. Ensure the QR code container remains centered and responsive."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-26T12:44:20.650Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 2,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-69",
+        "summary": "Create a self-contained `QRCode` React component at `frontend/src/components/shared-assets/QRCode.tsx` that uses the `qr-code-styling` npm library internally. The component must accept props: `value` (string), `size` ('sm' | 'md' | 'lg', mapping to 160/256/384 px), and `options` (optional object supporting `image`, `imageOptions` ({ imageSize, margin }), `dotsOptions` ({ color }), `cornersSquareOptions` ({ color }), and `cornersDotOptions` ({ color })). It must render the styled QR code into a DOM element via `qr-code-styling`'s `append()` method, re-rendering when props change.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/shared-assets/QRCode.tsx",
+          "frontend/src/components/shared-assets/qr-code.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/shared-assets/QRCode.tsx",
+          "frontend/src/components/shared-assets/qr-code.ts"
+        ]
+      },
+      {
+        "id": "REQ-70",
+        "summary": "Update `frontend/src/pages/QrPage.tsx` to replace the current static `<img>` QR code display with the new `<QRCode>` component from `@/components/shared-assets/qr-code`. Set `value` to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/`, `size` to `\"lg\"`, and apply styled options with dark/accent-colored dots and corner squares consistent with the portfolio's existing color theme. Retain the existing instruction text, fallback anchor link to the portfolio URL, and noindex SEO behavior.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/QrPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/QrPage.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/components/shared-assets/QRCode.tsx",
+    "frontend/src/components/shared-assets/qr-code.ts",
+    "frontend/src/pages/QrPage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

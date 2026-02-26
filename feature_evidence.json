@@ -1,0 +1,50 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-a-self-contained-qrcode-react-component-at-frontend-src-components-shared-assets-qrcode-tsx-that-uses-the-qr-code-styling-npm-library-internally-the-component-must-accept-props-value-string-size-sm-md-lg-mapping-to-160-256-384-px-and-options-optional-object-supporting-image-imageoptions-imagesize-margin-dotsoptions-color-cornerssquareoptions-color-and-cornersdotoptions-color-it-must-render-the-styled-qr-code-into-a-dom-element-via-qr-code-styling-s-append-method-re-rendering-when-props-change",
+      "featureTitle": "Create a self-contained `QRCode` React component at `frontend/src/components/shared-assets/QRCode.tsx` that uses the `qr-code-styling` npm library internally. The component must accept props: `value` (string), `size` ('sm' | 'md' | 'lg', mapping to 160/256/384 px), and `options` (optional object supporting `image`, `imageOptions` ({ imageSize, margin }), `dotsOptions` ({ color }), `cornersSquareOptions` ({ color }), and `cornersDotOptions` ({ color })). It must render the styled QR code into a DOM element via `qr-code-styling`'s `append()` method, re-rendering when props change.",
+      "files": [
+        "frontend/src/components/shared-assets/QRCode.tsx",
+        "frontend/src/components/shared-assets/qr-code.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-69"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-frontend-src-pages-qrpage-tsx-to-replace-the-current-static-img-qr-code-display-with-the-new-qrcode-component-from-components-shared-assets-qr-code-set-value-to-https-dynamic-developer-portfolio-with-public-site-and-a-w6e-caffeine-xyz-size-to-lg-and-apply-styled-options-with-dark-accent-colored-dots-and-corner-squares-consistent-with-the-portfolio-s-existing-color-theme-retain-the-existing-instruction-text-fallback-anchor-link-to-the-portfolio-url-and-noindex-seo-behavior",
+      "featureTitle": "Update `frontend/src/pages/QrPage.tsx` to replace the current static `<img>` QR code display with the new `<QRCode>` component from `@/components/shared-assets/qr-code`. Set `value` to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/`, `size` to `\"lg\"`, and apply styled options with dark/accent-colored dots and corner squares consistent with the portfolio's existing color theme. Retain the existing instruction text, fallback anchor link to the portfolio URL, and noindex SEO behavior.",
+      "files": [
+        "frontend/src/pages/QrPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-70"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

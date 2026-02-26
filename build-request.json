@@ -1,0 +1,66 @@
+{
+  "kind": "build_request",
+  "title": "Replace QR code implementation on /qr page with qr-code-styling-based component",
+  "projectName": "Developer Portfolio",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-69",
+      "text": "Create a self-contained `QRCode` React component at `frontend/src/components/shared-assets/QRCode.tsx` that uses the `qr-code-styling` npm library internally. The component must accept props: `value` (string), `size` ('sm' | 'md' | 'lg', mapping to 160/256/384 px), and `options` (optional object supporting `image`, `imageOptions` ({ imageSize, margin }), `dotsOptions` ({ color }), `cornersSquareOptions` ({ color }), and `cornersDotOptions` ({ color })). It must render the styled QR code into a DOM element via `qr-code-styling`'s `append()` method, re-rendering when props change.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-latest"
+        ],
+        "quotes": [
+          "import { QRCode } from '@/components/shared-assets/qr-code';",
+          "use this code install component qr code"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The component is importable as `import { QRCode } from '@/components/shared-assets/qr-code'`.",
+        "Passing `size=\"lg\"` renders a QR code of approximately 384px.",
+        "Passing `dotsOptions={{ color: '#53389e' }}` renders dots in that color.",
+        "Passing `cornersSquareOptions` and `cornersDotOptions` with a color applies those colors to the corner squares and corner dots respectively.",
+        "Passing `image` and `imageOptions` embeds the logo image at the specified size and margin.",
+        "The QR code re-renders correctly when `value` or `options` props change.",
+        "The component does not throw or produce a blank output when `options` is omitted."
+      ]
+    },
+    {
+      "id": "REQ-70",
+      "text": "Update `frontend/src/pages/QrPage.tsx` to replace the current static `<img>` QR code display with the new `<QRCode>` component from `@/components/shared-assets/qr-code`. Set `value` to `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/`, `size` to `\"lg\"`, and apply styled options with dark/accent-colored dots and corner squares consistent with the portfolio's existing color theme. Retain the existing instruction text, fallback anchor link to the portfolio URL, and noindex SEO behavior.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-latest"
+        ],
+        "quotes": [
+          "use this code install component qr code"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The `/qr` page renders the QR code using the new `<QRCode>` component, not a static `<img>` tag pointing to the PNG file.",
+        "The QR code encodes `https://dynamic-developer-portfolio-with-public-site-and-a-w6e.caffeine.xyz/` exactly.",
+        "The page still displays the portfolio URL as a clickable anchor link as a fallback.",
+        "The page retains its existing noindex/nofollow SEO head behavior.",
+        "The rendered QR code is visually styled (colored dots/corners) and not plain black-and-white default styling."
+      ]
+    }
+  ],
+  "constraints": [
+    "Use the `qr-code-styling` npm library for QR code rendering — do not use static PNG images or other QR libraries for this component.",
+    "The component import path must be `@/components/shared-assets/qr-code` (matching the user-provided import statement).",
+    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui."
+  ],
+  "nonGoals": [
+    "Modifying the `/scanner` page or camera-based QR scanning logic.",
+    "Changing any backend Motoko logic.",
+    "Replacing the static QR PNG asset used elsewhere in the project.",
+    "Adding new routes or navigation entries."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
